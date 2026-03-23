@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel • ISOP+</title>
+  <meta name="description" content="Admin tools for managing opportunities, users, and mentorship connections." />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html">
+        <span class="brand__logo" aria-hidden="true">🌟</span>
+        <span class="brand__name">ISOP+</span>
+      </a>
+
+      <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+
+      <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="opportunities.html" class="nav-link">Opportunities</a></li>
+          <li class="nav-item"><a href="training.html" class="nav-link">Training</a></li>
+          <li class="nav-item"><a href="mentorship.html" class="nav-link">Mentorship</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <div id="header-actions" class="header-actions">
+        <a class="btn btn--secondary" href="login.html">Login</a>
+        <a class="btn btn--primary" href="register.html">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="site-main">
+    <section class="features" aria-label="Admin dashboard">
+      <div class="container">
+        <h1 class="section-title">Admin panel</h1>
+        <p class="section-lead">
+          Manage opportunities, view applications, and support users with our admin tools. (This is a placeholder layout; connect it to your backend for full functionality.)
+        </p>
+
+        <div class="feature-grid">
+          <article class="feature-card" aria-labelledby="admin-opp-title">
+            <div class="feature-icon" aria-hidden="true">🗂️</div>
+            <h2 id="admin-opp-title" class="feature-title">Manage opportunities</h2>
+            <p class="feature-desc">Create, edit, or archive opportunities. Track application counts and access details.</p>
+            <a class="btn btn--secondary" href="#">Go</a>
+          </article>
+
+          <article class="feature-card" aria-labelledby="admin-users-title">
+            <div class="feature-icon" aria-hidden="true">👥</div>
+            <h2 id="admin-users-title" class="feature-title">Manage users</h2>
+            <p class="feature-desc">View user profiles, approve applications, and support account recovery requests.</p>
+            <a class="btn btn--secondary" href="#">Go</a>
+          </article>
+
+          <article class="feature-card" aria-labelledby="admin-data-title">
+            <div class="feature-icon" aria-hidden="true">📊</div>
+            <h2 id="admin-data-title" class="feature-title">Analytics & reports</h2>
+            <p class="feature-desc">Monitor platform usage, measure impact, and export reports for stakeholders.</p>
+            <a class="btn btn--secondary" href="#">Go</a>
+          </article>
+        </div>
+
+        <div class="cta" aria-label="Admin action">
+          <div class="container cta__inner">
+            <p class="cta__text">
+              Tip: To make this page truly helpful, connect it to your database and add real filters and export tools.
+            </p>
+            <a class="btn btn--primary" href="login.html">Sign in to administer</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer__inner">
+      <div class="footer-brand">
+        <span class="brand__logo" aria-hidden="true">🌟</span>
+        <span class="brand__name">ISOP+</span>
+        <p class="footer__text">Building a more inclusive future through skills, access, and support.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="footer-column">
+          <h3 class="footer-heading">Platform</h3>
+          <ul class="footer-list">
+            <li><a href="opportunities.html">Opportunities</a></li>
+            <li><a href="training.html">Training</a></li>
+            <li><a href="mentorship.html">Mentorship</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">Company</h3>
+          <ul class="footer-list">
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+            <li><a href="admin.html">Admin Panel</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h3 class="footer-heading">Get Help</h3>
+          <ul class="footer-list">
+            <li><a href="login.html">Login</a></li>
+            <li><a href="register.html">Register</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column footer-contact">
+          <h3 class="footer-heading">Contact</h3>
+          <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
+          <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
+          <div class="footer-social" aria-label="Social media links">
+            <a class="footer-social__link" href="#" aria-label="Twitter">
+              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+            </a>
+            <a class="footer-social__link" href="#" aria-label="LinkedIn">
+              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2h0a4 4 0 0 1 4-2z"/></svg>
+            </a>
+            <a class="footer-social__link" href="#" aria-label="Facebook">
+              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11 9.95V14.2h-2.3v-2.1H11V9.7c0-2.3 1.4-3.6 3.5-3.6 1 0 2 .1 2 .1v2.2h-1.1c-1.1 0-1.4.7-1.4 1.3v1.6h2.8l-.4 2.1h-2.4v7.8A10 10 0 0 0 22 12z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-legal">
+        <p>&copy; 2026 ISOP+. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
