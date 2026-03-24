@@ -72,11 +72,12 @@ const trainingsData = [
   { id: 'trn-3', title: 'Career Readiness Workshop', completed: 90 },
 ]
 
-const mentorshipData = [
-  { mentee: 'Claire K.', progress: 65, lastSession: '2026-03-28', nextSession: '2026-04-02' },
-  { mentee: 'James O.', progress: 30, lastSession: '2026-03-20', nextSession: '2026-04-05' },
-  { mentee: 'Rosa N.', progress: 45, lastSession: '2026-03-22', nextSession: '2026-04-01' },
-]
+// const mentorshipData = [  // Kept for fallback
+//   { mentee: 'Claire K.', progress: 65, lastSession: '2026-03-28', nextSession: '2026-04-02' },
+//   { mentee: 'James O.', progress: 30, lastSession: '2026-03-20', nextSession: '2026-04-05' },
+//   { mentee: 'Rosa N.', progress: 45, lastSession: '2026-03-22', nextSession: '2026-04-01' },
+// ]
+
 
 function getStorage(key, fallback) {
   try {
@@ -329,8 +330,110 @@ function renderStudentDashboard(auth, container) {
   }
 }
 
+async function loadMentorData(auth) {
+  // TODO: Use real user.id from Supabase session once integrated
+  const mockUserId = auth.email.replace(/[@.]/g, '_'); // Simple mock ID from email
+  try {
+    const [reviews, mentees] = await Promise.all([
+      getMyReviews(mockUserId),
+      getMyMentees(mockUserId)
+    ]);
+    return { reviews, mentees };
+  } catch (error) {
+    console.warn('Backend not ready (tables missing?), using mock:', error);
+    return { reviews: [], mentees: [] }; // Empty to show functional UI
+  }
+}
+
 function renderMentorDashboard(auth, container) {
-  const menteeRows = mentorshipData
+  container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem;"><div class="loading">Loading your mentor dashboard...</div></div>';
+
+  loadMentorData(auth).then(({ reviews, mentees }) => {
+    const reviewCount = reviews.length;
+    const avgProgress = mentees.length ? Math.round(mentees.reduce((sum, m) => sum + (m.mentee?.progress || 50), 0) / mentees.length) : 0;
+
+    container.innerHTML = `
+      <style>
+        .mentor-controls { display: flex; flex-direction: column; gap: 1rem; }
+        .mentor-controls input, .mentor-controls button { padding: 0.75rem; border-radius: 0.5rem; border: 1px solid #ddd; }
+        .review-item, .mentee-item { background: #f8f9fa; padding: 1rem; border-radius: 0.5rem; margin: 0.5rem 0; }
+      </style>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <div style="font-size: 2rem;">👥</div>
+          <h2>Mentees <span style="color: #666;">(${mentees.length})</span></h2>
+          <p>Avg progress: ${avgProgress}%</p>
+          <button id="viewMenteesBtn" class="btn btn--secondary">View Mentees</button>
+        </article>
+        <article class="feature-card">
+          <div style="font-size: 2rem;">📅</div>
+          <h2>Schedule Meeting</h2>
+          <div class="mentor-controls">
+            <input id="menteeIdInput" placeholder="Mentee ID/email">
+            <input id="meetingDateInput" type="datetime-local">
+            <button id="scheduleBtn" class="btn btn--primary">Schedule</button>
+          </div>
+        </article>
+        <article class="feature-card">
+          <div style="font-size: 2rem;">💬</div>
+          <h2>Reviews (${reviewCount})</h2>
+          <button id="viewReviewsBtn" class="btn btn--secondary">View All Reviews</button>
+        </article>
+        <article class="feature-card">
+          <div style="font-size: 2rem;">📚</div>
+          <h2>Upload Resource</h2>
+          <div class="mentor-controls">
+            <input id="resTitleInput" placeholder="Resource title">
+            <input type="file" id="resFileInput" accept=".pdf,.doc,.pptx,image/*">
+            <button id="uploadResBtn" class="btn btn--primary">Upload</button>
+          </div>
+        </article>
+      </div>
+    `;
+
+    // Attach event listeners
+    document.getElementById('scheduleBtn')?.addEventListener('click', async () => {
+      const menteeId = document.getElementById('menteeIdInput').value;
+      const datetime = document.getElementById('meetingDateInput').value;
+      if (!menteeId || !datetime) return renderAlert('error', 'Fill mentee and date', 'main');
+      try {
+        const mockId = auth.email.replace(/[@.]/g, '_');
+        await scheduleMeeting(mockId, menteeId, new Date(datetime), '');
+        renderAlert('success', 'Meeting scheduled!', 'main');
+        loadMentorData(auth).then(data => renderMentorDashboard(auth, container)); // Refresh
+      } catch (e) {
+        renderAlert('error', 'Schedule failed (check Supabase tables?): ' + e.message, 'main');
+      }
+    });
+
+    document.getElementById('viewReviewsBtn')?.addEventListener('click', () => {
+      if (!reviews.length) return alert('No reviews yet');
+      const html = reviews.map(r => `<div class="review-item"><strong>${r.from_id}</strong> (${r.rating}/5): ${r.comment}</div>`).join('');
+      alert('Your Reviews:\\n' + html);
+    });
+
+    document.getElementById('viewMenteesBtn')?.addEventListener('click', () => {
+      if (!mentees.length) return alert('No mentees yet');
+      const html = mentees.map(m => `<div class="mentee-item"><strong>${m.mentee?.name || m.mentee}</strong> - ${new Date(m.datetime).toLocaleString()}</div>`).join('');
+      alert('Your Mentees:\\n' + html);
+    });
+
+    document.getElementById('uploadResBtn')?.addEventListener('click', async () => {
+      const title = document.getElementById('resTitleInput').value;
+      const file = document.getElementById('resFileInput').files[0];
+      if (!title || !file) return renderAlert('error', 'Title and file required', 'main');
+      try {
+        const mockId = auth.email.replace(/[@.]/g, '_');
+        await uploadResource(mockId, title, 'Mentor resource', file);
+        renderAlert('success', 'Resource uploaded to Supabase!', 'main');
+        document.getElementById('resTitleInput').value = '';
+        document.getElementById('resFileInput').value = '';
+      } catch (e) {
+        renderAlert('error', 'Upload failed (check Storage bucket?): ' + e.message, 'main');
+      }
+    });
+  });
+}
     .map((item) => `<tr><td>${item.mentee}</td><td><div class="progress" role="progressbar" aria-valuenow="${item.progress}" aria-valuemin="0" aria-valuemax="100"><div class="progress__fill" style="width:${item.progress}%"></div></div> ${item.progress}%</td><td>${item.nextSession}</td></tr>`)
     .join('')
 
