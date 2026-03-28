@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mentor Dashboard • ISOP+</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header" role="banner">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html"><span class="brand__logo">🌟</span> <span class="brand__name">ISOP+</span></a>
+      <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
+        <ul class="nav-list">
+          <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="opportunities.html" class="nav-link">Opportunities</a></li>
+          <li class="nav-item"><a href="training.html" class="nav-link">Training</a></li>
+          <li class="nav-item"><a href="mentorship.html" class="nav-link">Mentorship</a></li>
+        </ul>
+      </nav>
+      <div id="header-actions" class="header-actions"></div>
+    </div>
+  </header>
+
+  <main id="main" class="site-main">
+    <section class="features" aria-label="Mentor dashboard">
+      <div class="container">
+        <h1 class="section-title">Mentor Dashboard</h1>
+        <p class="section-lead">Your personalized mentor workspace.</p>
+        <div id="dashboardContent"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">...</footer>
+
+  <script src="../assets/js/localdb.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+    const auth = localDB.getCurrentUser()
+    console.log('mentor-dashboard auth:', auth)
+    document.getElementById('dashboardContent').insertAdjacentHTML('beforebegin', '<p id="mentorDebug" style="color:#0f172a;background:#f0f9ff;border:1px solid #93c5fd;padding:.5rem;border-radius:.5rem;margin:.75rem 0;">Mentor dashboard rendering status: initializing...</p>')
+
+    if (!auth) {
+      document.getElementById('mentorDebug').textContent = 'Mentor dashboard rendering status: no auth found, redirecting to login.'
+      return window.location.href = 'login.html'
+    }
+    if (auth.role !== 'mentor') {
+      document.getElementById('mentorDebug').textContent = 'Mentor dashboard rendering status: wrong role, redirecting to correct dashboard.'
+      return window.location.href = auth.role === 'student' ? 'student-dashboard.html' : auth.role === 'admin' ? 'admin.html' : 'login.html'
+    }
+
+    renderHeaderLinks()
+    renderMentorDashboard(auth, document.getElementById('dashboardContent'))
+    document.getElementById('mentorDebug').textContent = 'Mentor dashboard rendering status: loaded successfully.'
+  </script>
+</body>
+</html>

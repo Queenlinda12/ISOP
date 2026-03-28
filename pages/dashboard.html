@@ -41,9 +41,6 @@
     </div>
   </header>
 
-  <script src="../assets/js/supabase.js"></script>
-  <script src="../assets/js/backend.js"></script>
-
   <main id="main" class="site-main">
     <section class="features" aria-label="User dashboard">
       <div class="container">
@@ -124,6 +121,25 @@
     </div>
   </footer>
 
+  <script src="../assets/js/localdb.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script>
+    (function() {
+      const auth = window.localDB ? window.localDB.getCurrentUser() : null
+      if (!auth) {
+        window.location.href = 'login.html'
+        return
+      }
+      if (auth.role === 'student') {
+        renderStudentDashboard(auth, document.getElementById('dashboardContent'))
+      } else if (auth.role === 'mentor') {
+        window.location.href = 'mentor-tools.html'
+      } else if (auth.role === 'admin') {
+        window.location.href = 'admin.html'
+      } else {
+        renderStudentDashboard(auth, document.getElementById('dashboardContent'))
+      }
+    })();
+  </script>
 </body>
 </html>

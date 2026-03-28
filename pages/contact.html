@@ -5,7 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact • ISOP+</title>
   <meta name="description" content="Get in touch with the ISOP+ team for support, feedback, or partnership inquiries." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .contact-wrapper {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .contact-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .contact-info {
+      display: flex;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .contact-info-item {
+      flex: 1;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-info-item:hover { background: rgba(255,255,255,0.07); border-color: rgba(45,140,255,0.3); color: white; }
+    .contact-info-item .ci-icon { font-size: 1.3rem; flex-shrink: 0; }
+    .contact-info-item strong { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.45); margin-bottom: 0.15rem; }
+
+    .contact-form { display: grid; gap: 1.1rem; }
+
+    .contact-form .form-label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .contact-form .form-input {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: white;
+      background: rgba(255,255,255,0.06);
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+    .contact-form .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .contact-form .form-input:focus {
+      outline: none;
+      border-color: rgba(45,140,255,0.55);
+      background: rgba(255,255,255,0.09);
+      box-shadow: 0 0 0 3px rgba(45,140,255,0.15);
+    }
+    textarea.form-input { resize: vertical; min-height: 130px; }
+
+    .contact-form .send-btn {
+      padding: 0.95rem 1.5rem;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2d8cff, #0bb5ff);
+      color: white;
+      box-shadow: 0 6px 20px rgba(45,140,255,0.35);
+      transition: all 0.2s;
+      letter-spacing: 0.01em;
+    }
+    .contact-form .send-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(45,140,255,0.45); }
+    .contact-form .send-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    .form-status {
+      display: none;
+      padding: 0.9rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .form-status.success { display: block; background: rgba(74,222,128,0.1); color: #4ade80; border: 1px solid rgba(74,222,128,0.25); }
+    .form-status.error   { display: block; background: rgba(239,68,68,0.1);  color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -44,28 +142,48 @@
   <main id="main" class="site-main">
     <section class="features" aria-label="Contact form">
       <div class="container">
-        <h1 class="section-title">Get in touch</h1>
-        <p class="section-lead">
-          Have a question or feedback? Reach out and our team will respond as soon as possible.
-        </p>
+        <div class="contact-wrapper">
+          <h1 class="section-title">Get in touch</h1>
+          <p class="section-lead">
+            Have a question, suggestion, or partnership inquiry? Send us a message and our team will get back to you.
+          </p>
 
-        <p class="form-note">
-          Contact us by phone at <a href="tel:+250783193479">+250 783 193 479</a> or by email at <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a>.
-        </p>
+          <p class="form-note">
+            You can also contact us directly by phone at
+            <a href="tel:+250783193479">+250 783 193 479</a>
+            or by email at
+            <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a>.
+          </p>
 
-        <div class="feature-card">
-          <form class="form" action="#" method="post" aria-label="Contact form">
-            <label class="form-label" for="name">Full name</label>
-            <input class="form-input" type="text" id="name" name="name" required />
+          <div class="feature-card">
+            <form
+              class="form"
+              id="contactForm"
+              name="contact"
+              method="POST"
+              data-netlify="true"
+              netlify-honeypot="bot-field"
+            >
+              <input type="hidden" name="form-name" value="contact" />
+              <input type="hidden" name="subject" value="New ISOP+ contact message" />
+              <p hidden>
+                <label>Don’t fill this out: <input name="bot-field" /></label>
+              </p>
 
-            <label class="form-label" for="email">Email</label>
-            <input class="form-input" type="email" id="email" name="email" required />
+              <label class="form-label" for="name">Full name</label>
+              <input class="form-input" type="text" id="name" name="name" required />
 
-            <label class="form-label" for="message">Message</label>
-            <textarea class="form-input" id="message" name="message" rows="5" required></textarea>
+              <label class="form-label" for="email">Email</label>
+              <input class="form-input" type="email" id="email" name="email" required />
 
-            <button class="btn btn--primary" type="submit">Send message</button>
-          </form>
+              <label class="form-label" for="message">Message</label>
+              <textarea class="form-input" id="message" name="message" rows="6" required></textarea>
+
+              <button class="btn btn--primary" id="sendBtn" type="submit">Send message</button>
+
+              <div id="formStatus" class="form-status" aria-live="polite"></div>
+            </form>
+          </div>
         </div>
       </div>
     </section>
@@ -112,13 +230,13 @@
           <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
           <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
           <div class="footer-social" aria-label="Social media links">
-            <a class="footer-social__link" href="#" aria-label="Twitter">
+            <a class="footer-social__link" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
               <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
             </a>
-            <a class="footer-social__link" href="#" aria-label="LinkedIn">
+            <a class="footer-social__link" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
               <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2h0a4 4 0 0 1 4-2z"/></svg>
             </a>
-            <a class="footer-social__link" href="#" aria-label="Facebook">
+            <a class="footer-social__link" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11 9.95V14.2h-2.3v-2.1H11V9.7c0-2.3 1.4-3.6 3.5-3.6 1 0 2 .1 2 .1v2.2h-1.1c-1.1 0-1.4.7-1.4 1.3v1.6h2.8l-.4 2.1h-2.4v7.8A10 10 0 0 0 22 12z"/></svg>
             </a>
           </div>
@@ -132,5 +250,56 @@
   </footer>
 
   <script src="../assets/js/main.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("contactForm");
+      const status = document.getElementById("formStatus");
+      const sendBtn = document.getElementById("sendBtn");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        status.className = "form-status";
+        status.textContent = "";
+
+        const name = form.name.value.trim();
+        const email = form.email.value.trim();
+        const message = form.message.value.trim();
+
+        if (!name || !email || !message) {
+          status.className = "form-status error";
+          status.textContent = "Please fill in all fields before sending.";
+          return;
+        }
+
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Sending...";
+
+        try {
+          const formData = new FormData(form);
+
+          const response = await fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams(formData).toString()
+          });
+
+          if (response.ok) {
+            status.className = "form-status success";
+            status.textContent = "Your message has been sent successfully.";
+            form.reset();
+          } else {
+            throw new Error("Form submission failed");
+          }
+        } catch (error) {
+          status.className = "form-status error";
+          status.textContent = "Sorry, your message could not be sent. Please try again.";
+        } finally {
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Send message";
+        }
+      });
+    });
+  </script>
 </body>
 </html>

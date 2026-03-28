@@ -4,6 +4,8 @@
   - Designed for accessibility (WCAG friendly colors and focus styles)
 */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap');
+
 :root {
   --color-bg: #0b1220;
   --color-surface: #101b33;
@@ -20,7 +22,7 @@
   --radius: 16px;
   --radius-sm: 12px;
   --max-width: 1200px;
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ease: cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
@@ -39,10 +41,13 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: var(--color-text);
   background: radial-gradient(circle at top, #0d233c 0%, #071021 55%, #020812 100%);
   min-height: 100vh;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 img,

@@ -1,130 +1,191 @@
-import { createClient } from '@supabase/supabase-js'
+// Supabase integration - loaded after CDN script
+// CDN: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-// Replace with your Supabase URL and anon key from dashboard
 const supabaseUrl = 'https://hwepgzdwoiojdwnebvhi.supabase.co'
-const supabaseAnonKey = 'your-anon-key-here' // Get from Supabase dashboard > Settings > API
+const supabaseAnonKey = 'sb_publishable_gzUYn3b9SD4RoT1LwFWKKw_qHF1wwCt'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+let supabaseClient = null
+try {
+  if (typeof supabase !== 'undefined') {
+    supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey)
+  }
+} catch (e) {
+  console.warn('Supabase CDN not loaded, running in offline mode.')
+}
+
+window.supabaseClient = supabaseClient
 
 // Auth functions
-export async function signUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password })
+async function signUp(email, password) {
+  if (!supabaseClient) throw new Error('Supabase not available')
+  const { data, error } = await supabaseClient.auth.signUp({ email, password })
   if (error) throw error
   return data
 }
 
-export async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+async function signIn(email, password) {
+  if (!supabaseClient) throw new Error('Supabase not available')
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password })
   if (error) throw error
   return data
 }
 
-export async function signOut() {
-  const { error } = await supabase.auth.signOut()
+async function signOut() {
+  if (!supabaseClient) return
+  const { error } = await supabaseClient.auth.signOut()
   if (error) throw error
 }
 
-export async function getSession() {
-  const { data: { session } } = await supabase.auth.getSession()
+async function getSession() {
+  if (!supabaseClient) return null
+  const { data: { session } } = await supabaseClient.auth.getSession()
   return session
 }
 
-// Dashboard data (replace with your tables)
-export async function getUserApplications(userId) {
-  const { data, error } = await supabase
+// === STUDENT APPLICATIONS WITH CV ===
+async function applyWithCV(userId, opportunityId, cvFile, experience, accessibility) {
+  if (!supabaseClient) throw new Error('Supabase not available')
+
+  const fileExt = cvFile.name.split('.').pop()
+  const fileName = `${Date.now()}-${userId}.${fileExt}`
+  const filePath = `applications/${userId}/${fileName}`
+
+  let cvUrl = ''
+  try {
+    const { error: uploadError } = await supabaseClient.storage
+      .from('applications')
+      .upload(filePath, cvFile)
+    if (!uploadError) {
+      cvUrl = supabaseClient.storage.from('applications').getPublicUrl(filePath).data.publicUrl
+    }
+  } catch (e) {
+    console.warn('CV upload failed, proceeding without CV:', e)
+  }
+
+  const { data, error } = await supabaseClient
     .from('applications')
-    .select('*')
+    .insert([{
+      user_id: userId,
+      opportunity_id: opportunityId,
+      cv_url: cvUrl,
+      experience: experience || '',
+      accessibility: accessibility || '',
+      status: 'Submitted'
+    }])
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+async function getUserApplications(userId) {
+  if (!supabaseClient) return []
+  const { data, error } = await supabaseClient
+    .from('applications')
+    .select('*, opportunity:opportunity_id(title, type)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
-  if (error) throw error
-  return data
+  if (error) { console.warn(error); return [] }
+  return data || []
 }
 
-export async function getRecommendedOpportunities() {
-  const { data, error } = await supabase
+async function getRecommendedOpportunities() {
+  if (!supabaseClient) return []
+  const { data, error } = await supabaseClient
     .from('opportunities')
-    .select()
-    .limit(3)
-  if (error) throw error
-  return data
+    .select('*')
+    .limit(8)
+    .order('deadline')
+  if (error) { console.warn(error); return [] }
+  return data || []
 }
 
-export async function getUserStats(userId) {
-  // Custom query for stats
-  const { data, error } = await supabase
-    .rpc('get_user_stats', { user_id: userId })
-  if (error) throw error
+async function getUserStats(userId) {
+  if (!supabaseClient) return null
+  const { data, error } = await supabaseClient.rpc('get_user_stats', { user_id: userId })
+  if (error) { console.warn(error); return null }
   return data
 }
 
 // === MENTOR FEATURES ===
-// Get reviews/feedbacks for this mentor (where to_id = userId)
-export async function getMyReviews(userId) {
-  const { data, error } = await supabase
+async function getMyReviews(userId) {
+  if (!supabaseClient) return []
+  const { data, error } = await supabaseClient
     .from('reviews')
     .select('*')
     .eq('to_id', userId)
     .order('created_at', { ascending: false })
-  if (error) throw error
+  if (error) { console.warn(error); return [] }
   return data || []
 }
 
-// Get my mentees (meetings where I'm mentor)
-export async function getMyMentees(userId) {
-  const { data, error } = await supabase
+async function getMyMentees(userId) {
+  if (!supabaseClient) return []
+  const { data, error } = await supabaseClient
     .from('meetings')
-    .select('*, mentee:mentee_id(*, profiles(name))')
+    .select('*, mentee:mentee_id(*)')
     .eq('mentor_id', userId)
     .order('datetime', { ascending: true })
-  if (error) throw error
+  if (error) { console.warn(error); return [] }
   return data || []
 }
 
-// Schedule a meeting
-export async function scheduleMeeting(mentorId, menteeId, datetime, notes = '') {
-  const { data, error } = await supabase
+async function scheduleMeeting(mentorId, menteeId, datetime, notes) {
+  if (!supabaseClient) throw new Error('Supabase not available')
+  const { data, error } = await supabaseClient
     .from('meetings')
-    .insert([{ mentor_id: mentorId, mentee_id: menteeId, datetime, notes, status: 'scheduled' }])
+    .insert([{ mentor_id: mentorId, mentee_id: menteeId, datetime, notes: notes || '', status: 'scheduled' }])
     .select()
     .single()
   if (error) throw error
   return data
 }
 
-// Upload resource (file to Storage, record in DB)
-export async function uploadResource(mentorId, title, description, file) {
-  // Upload file to Storage
+async function uploadResource(mentorId, title, description, file) {
+  if (!supabaseClient) throw new Error('Supabase not available')
+
   const fileExt = file.name.split('.').pop()
   const fileName = `${Date.now()}-${mentorId}.${fileExt}`
   const filePath = `resources/${mentorId}/${fileName}`
 
-  const { data: uploadData, error: uploadError } = await supabase.storage
+  const { error: uploadError } = await supabaseClient.storage
     .from('resources')
     .upload(filePath, file)
-
   if (uploadError) throw uploadError
 
-  // Insert record
-  const publicUrl = supabase.storage.from('resources').getPublicUrl(filePath).data.publicUrl
-  const { data, error } = await supabase
+  const publicUrl = supabaseClient.storage.from('resources').getPublicUrl(filePath).data.publicUrl
+  const { data, error } = await supabaseClient
     .from('resources')
-    .insert([{ mentor_id: mentorId, title, description, file_url: publicUrl }])
+    .insert([{ mentor_id: mentorId, title, description: description || '', file_url: publicUrl }])
     .select()
     .single()
-
   if (error) throw error
   return data
 }
 
-// Update user profile role (for mentor signup)
-export async function updateUserRole(userId, role) {
-  const { data, error } = await supabase
+async function updateUserRole(userId, role) {
+  if (!supabaseClient) return null
+  const { data, error } = await supabaseClient
     .from('profiles')
     .update({ role })
     .eq('id', userId)
     .select()
-  if (error) throw error
+  if (error) { console.warn(error); return null }
   return data
 }
 
-
+// Expose all functions globally
+window.signUp = signUp
+window.signIn = signIn
+window.signOut = signOut
+window.getSession = getSession
+window.applyWithCV = applyWithCV
+window.getUserApplications = getUserApplications
+window.getRecommendedOpportunities = getRecommendedOpportunities
+window.getUserStats = getUserStats
+window.getMyReviews = getMyReviews
+window.getMyMentees = getMyMentees
+window.scheduleMeeting = scheduleMeeting
+window.uploadResource = uploadResource
+window.updateUserRole = updateUserRole

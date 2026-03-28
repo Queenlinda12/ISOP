@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard • ISOP+</title>
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+
+    /* Unauth overlay */
+    #unauthOverlay { display:none; position:fixed; inset:0; background:rgba(15,23,42,0.95); z-index:100; align-items:center; justify-content:center; text-align:center; flex-direction:column; gap:1rem; }
+    #unauthOverlay h2 { font-size:1.8rem; }
+    #unauthOverlay p { color:rgba(255,255,255,0.7); }
+
+    /* Dashboard layout */
+    #dashboardContainer { display:none; min-height:100vh; flex-direction:column; }
+
+    /* Header */
+    .dash-header { background:rgba(255,255,255,0.05); border-bottom:1px solid rgba(255,255,255,0.08); padding:0 1.5rem; height:64px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:50; backdrop-filter:blur(12px); }
+    .dash-brand { font-size:1.35rem; font-weight:800; color:white; text-decoration:none; }
+    .dash-header-right { display:flex; align-items:center; gap:1rem; }
+    .dash-username { color:rgba(255,255,255,0.8); font-size:0.9rem; }
+    .btn-logout { padding:0.5rem 1.1rem; border-radius:10px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:rgba(255,255,255,0.8); cursor:pointer; font-size:0.875rem; transition:all 0.2s; }
+    .btn-logout:hover { background:rgba(239,68,68,0.15); border-color:#ef4444; color:#ef4444; }
+
+    /* Body */
+    .dash-body { display:flex; flex:1; }
+
+    /* Sidebar */
+    .dash-sidebar { width:220px; flex-shrink:0; background:rgba(255,255,255,0.04); border-right:1px solid rgba(255,255,255,0.07); padding:1.25rem 0.75rem; display:flex; flex-direction:column; gap:0.25rem; position:sticky; top:64px; height:calc(100vh - 64px); overflow-y:auto; }
+    .nav-link { display:flex; align-items:center; gap:0.75rem; width:100%; padding:0.7rem 1rem; border:none; background:transparent; color:rgba(255,255,255,0.65); border-radius:10px; cursor:pointer; font-size:0.9rem; text-align:left; transition:all 0.2s; }
+    .nav-link:hover { background:rgba(255,255,255,0.07); color:white; }
+    .nav-link.active { background:rgba(45,140,255,0.2); color:#60a5fa; font-weight:600; }
+    .nav-link .nav-icon { width:20px; text-align:center; flex-shrink:0; }
+
+    /* Main content */
+    .dash-content { flex:1; padding:1.75rem; overflow-y:auto; }
+    .content-section { display:none; }
+    .content-section.active { display:block; }
+
+    /* Stats grid */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:1rem; margin-bottom:2rem; }
+    .stat-card { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:1.25rem; text-align:center; }
+    .stat-value { font-size:2rem; font-weight:700; color:white; }
+    .stat-label { color:rgba(255,255,255,0.6); font-size:0.82rem; margin-top:0.25rem; }
+
+    /* Section header */
+    .section-title { font-size:1.4rem; font-weight:700; margin-bottom:1.25rem; }
+    .overview-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; margin-bottom:1.5rem; }
+    @media (max-width:768px) { .overview-grid { grid-template-columns:1fr; } }
+
+    /* Cards */
+    .card { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.09); border-radius:16px; padding:1.25rem; }
+    .card h3 { font-size:1rem; font-weight:600; margin-bottom:1rem; color:rgba(255,255,255,0.9); }
+
+    /* Opportunity cards */
+    .opp-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1rem; }
+    .opp-card { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:1.25rem; }
+    .opp-title { font-size:1rem; font-weight:600; margin-bottom:0.4rem; }
+    .opp-meta { font-size:0.8rem; color:rgba(255,255,255,0.55); margin-bottom:0.6rem; }
+    .opp-desc { font-size:0.875rem; color:rgba(255,255,255,0.75); margin-bottom:1rem; line-height:1.5; }
+    .opp-actions { display:flex; gap:0.5rem; flex-wrap:wrap; }
+
+    /* Buttons */
+    .btn { padding:0.5rem 1rem; border-radius:8px; border:none; cursor:pointer; font-size:0.875rem; font-weight:500; transition:all 0.2s; }
+    .btn-primary { background:#2d8cff; color:white; }
+    .btn-primary:hover { background:#1a7ae8; }
+    .btn-secondary { background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); }
+    .btn-secondary:hover { background:rgba(255,255,255,0.18); }
+
+    /* Table */
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; font-size:0.9rem; }
+    th { text-align:left; padding:0.75rem 1rem; color:rgba(255,255,255,0.55); font-weight:500; border-bottom:1px solid rgba(255,255,255,0.08); }
+    td { padding:0.75rem 1rem; border-bottom:1px solid rgba(255,255,255,0.05); color:rgba(255,255,255,0.85); }
+    tr:hover td { background:rgba(255,255,255,0.03); }
+
+    /* Badges */
+    .badge { padding:0.25rem 0.65rem; border-radius:20px; font-size:0.78rem; font-weight:600; }
+    .badge-warning { background:rgba(245,158,11,0.2); color:#fbbf24; }
+    .badge-success { background:rgba(16,185,129,0.2); color:#34d399; }
+    .badge-danger  { background:rgba(239,68,68,0.2); color:#f87171; }
+
+    /* Mentor card */
+    .mentor-card { text-align:center; padding:1.5rem; }
+    .mentor-avatar { font-size:3rem; margin-bottom:0.75rem; }
+
+    /* Progress bar */
+    .progress { background:rgba(255,255,255,0.1); border-radius:99px; height:8px; overflow:hidden; }
+    .progress-fill { height:100%; background:linear-gradient(90deg,#2d8cff,#7c3aed); border-radius:99px; transition:width 0.5s; }
+
+    /* Meeting form */
+    .form-field { margin-bottom:1rem; }
+    .form-field label { display:block; margin-bottom:0.4rem; font-size:0.9rem; color:rgba(255,255,255,0.8); }
+    .form-field input, .form-field textarea { width:100%; padding:0.75rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:white; font-size:0.9rem; }
+    .form-field input::placeholder, .form-field textarea::placeholder { color:rgba(255,255,255,0.4); }
+    .form-field input:focus, .form-field textarea:focus { outline:none; border-color:#2d8cff; }
+
+    /* Notification item */
+    .notification { padding:0.85rem 1rem; background:rgba(255,255,255,0.05); border-radius:10px; margin-bottom:0.5rem; border-left:3px solid #2d8cff; }
+
+    /* Toast */
+    #toast { position:fixed; bottom:2rem; right:2rem; background:#1e293b; color:white; padding:0.9rem 1.25rem; border-radius:12px; font-size:0.9rem; z-index:9999; box-shadow:0 8px 30px rgba(0,0,0,0.3); display:none; border-left:4px solid #2d8cff; max-width:320px; }
+    #toast.success { border-left-color:#10b981; }
+    #toast.error { border-left-color:#ef4444; }
+
+    /* Responsive */
+    @media (max-width:640px) {
+      .dash-sidebar { display:none; }
+      .dash-content { padding:1rem; }
+    }
+    .mobile-nav { display:none; }
+    @media (max-width:640px) {
+      .mobile-nav { display:flex; gap:0.5rem; overflow-x:auto; padding:0.75rem 1rem; background:rgba(255,255,255,0.04); border-bottom:1px solid rgba(255,255,255,0.07); }
+      .mobile-nav .nav-link { flex-shrink:0; white-space:nowrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Unauthenticated overlay -->
+  <div id="unauthOverlay">
+    <div style="font-size:3rem;">🔒</div>
+    <h2>Access Restricted</h2>
+    <p>You need to be signed in as a student to view this page.</p>
+    <a href="login.html" class="btn btn-primary" style="padding:0.75rem 1.75rem; border-radius:12px; font-size:1rem; text-decoration:none; background:#2d8cff; color:white; display:inline-block; margin-top:0.5rem;">Go to Login</a>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboardContainer">
+
+    <!-- Header -->
+    <header class="dash-header">
+      <a class="dash-brand" href="../index.html">🌟 ISOP+</a>
+      <div class="dash-header-right">
+        <span class="dash-username" id="welcomeUser"></span>
+        <button class="btn-logout" onclick="logoutStudent()">Logout</button>
+      </div>
+    </header>
+
+    <!-- Mobile nav -->
+    <div class="mobile-nav">
+      <button class="nav-link active" data-section="overview"><span class="nav-icon">🏠</span> Overview</button>
+      <button class="nav-link" data-section="opportunities"><span class="nav-icon">💼</span> Opportunities</button>
+      <button class="nav-link" data-section="applications"><span class="nav-icon">📋</span> Applications</button>
+      <button class="nav-link" data-section="training"><span class="nav-icon">📚</span> Training</button>
+      <button class="nav-link" data-section="mentorship"><span class="nav-icon">🤝</span> Mentorship</button>
+      <button class="nav-link" data-section="meetings"><span class="nav-icon">📅</span> Meetings</button>
+      <button class="nav-link" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</button>
+    </div>
+
+    <div class="dash-body">
+
+      <!-- Sidebar -->
+      <nav class="dash-sidebar">
+        <button class="nav-link active" data-section="overview"><span class="nav-icon">🏠</span> Overview</button>
+        <button class="nav-link" data-section="opportunities"><span class="nav-icon">💼</span> Opportunities</button>
+        <button class="nav-link" data-section="applications"><span class="nav-icon">📋</span> Applications</button>
+        <button class="nav-link" data-section="training"><span class="nav-icon">📚</span> Training</button>
+        <button class="nav-link" data-section="mentorship"><span class="nav-icon">🤝</span> Mentorship</button>
+        <button class="nav-link" data-section="meetings"><span class="nav-icon">📅</span> Meetings</button>
+        <button class="nav-link" data-section="notifications"><span class="nav-icon">🔔</span> Notifications</button>
+      </nav>
+
+      <!-- Main content -->
+      <main class="dash-content">
+
+        <!-- ── OVERVIEW ── -->
+        <section id="overview" class="content-section active">
+          <h1 class="section-title">Welcome back 👋</h1>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" data-stat="opps">–</div>
+              <div class="stat-label">Opportunities</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" data-stat="apps">–</div>
+              <div class="stat-label">Applications</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" data-stat="saved">–</div>
+              <div class="stat-label">Saved</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" data-stat="training">–</div>
+              <div class="stat-label">Training Avg</div>
+            </div>
+          </div>
+
+          <div class="overview-grid">
+            <div class="card">
+              <h3>💼 Recommended Opportunities</h3>
+              <div id="recommendedOpps">Loading…</div>
+            </div>
+            <div class="card">
+              <h3>🤝 My Mentor</h3>
+              <div id="mentorInfo">Loading…</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>📋 Recent Applications</h3>
+            <div class="table-wrap">
+              <table id="recentApps"></table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── OPPORTUNITIES ── -->
+        <section id="opportunities" class="content-section">
+          <h1 class="section-title">All Opportunities</h1>
+          <div id="oppSearch" style="margin-bottom:1.25rem;">
+            <input type="search" id="oppSearchInput" placeholder="Search opportunities…" style="width:100%; max-width:400px; padding:0.7rem 1rem; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:white; font-size:0.9rem;">
+          </div>
+          <div class="opp-grid" id="allOpps">Loading…</div>
+        </section>
+
+        <!-- ── APPLICATIONS ── -->
+        <section id="applications" class="content-section">
+          <h1 class="section-title">My Applications</h1>
+          <div class="card">
+            <div class="table-wrap">
+              <table id="allApps"></table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── TRAINING ── -->
+        <section id="training" class="content-section">
+          <h1 class="section-title">Training Progress</h1>
+          <div id="allTraining">Loading…</div>
+        </section>
+
+        <!-- ── MENTORSHIP ── -->
+        <section id="mentorship" class="content-section">
+          <h1 class="section-title">My Mentor</h1>
+          <div id="mentorSectionFull">Loading…</div>
+        </section>
+
+        <!-- ── MEETINGS ── -->
+        <section id="meetings" class="content-section">
+          <h1 class="section-title">Meetings</h1>
+
+          <div class="card" style="max-width:520px; margin-bottom:1.5rem;">
+            <h3>📅 Request a Meeting</h3>
+            <form id="meetingForm">
+              <div class="form-field">
+                <label for="meetingDate">Preferred date & time</label>
+                <input type="datetime-local" id="meetingDate" required />
+              </div>
+              <div class="form-field">
+                <label for="meetingNotes">Notes (optional)</label>
+                <textarea id="meetingNotes" rows="3" placeholder="What would you like to discuss?"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%; padding:0.75rem;">Request Meeting</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Upcoming Meetings</h3>
+            <div id="meetingsList">No meetings scheduled yet.</div>
+          </div>
+        </section>
+
+        <!-- ── NOTIFICATIONS ── -->
+        <section id="notifications" class="content-section">
+          <h1 class="section-title">Notifications</h1>
+          <div id="notificationsList"><p style="color:rgba(255,255,255,0.6);">No notifications yet.</p></div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/localdb.js"></script>
+  <script src="../assets/js/supabase.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script>
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type || '';
+    t.style.display = 'block';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => { t.style.display = 'none'; }, 3500);
+  }
+
+  function getCurrentUserSafe() {
+    try { if (typeof getAuth === 'function') return getAuth(); } catch (e) {}
+    try { return JSON.parse(localStorage.getItem('isop_auth')); } catch (e) { return null; }
+  }
+
+  function clearCurrentUserSafe() {
+    try { if (typeof clearAuth === 'function') { clearAuth(); return; } } catch (e) {}
+    localStorage.removeItem('isop_auth');
+  }
+
+  function checkAuth() {
+    const user = getCurrentUserSafe();
+    if (!user || user.role !== 'student') {
+      document.getElementById('dashboardContainer').style.display = 'none';
+      document.getElementById('unauthOverlay').style.display = 'flex';
+      return null;
+    }
+    document.getElementById('dashboardContainer').style.display = 'flex';
+    document.getElementById('unauthOverlay').style.display = 'none';
+    return user;
+  }
+
+  function getSafeArray(fn, fallback) {
+    fallback = fallback || [];
+    try {
+      const result = typeof fn === 'function' ? fn() : fallback;
+      return Array.isArray(result) ? result : fallback;
+    } catch (e) { return fallback; }
+  }
+
+  function getSafeValue(fn, fallback) {
+    if (fallback === undefined) fallback = null;
+    try {
+      const result = typeof fn === 'function' ? fn() : fallback;
+      return (result !== null && result !== undefined) ? result : fallback;
+    } catch (e) { return fallback; }
+  }
+
+  function getBadgeClass(status) {
+    const map = { "Submitted":"badge-warning","Under Review":"badge-warning","Accepted":"badge-success","Interview":"badge-success","Rejected":"badge-danger" };
+    return map[status] || "badge-warning";
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function renderRecommendedOpportunities() {
+    const opps = getSafeArray(window.getOpportunities, []);
+    const container = document.getElementById('recommendedOpps');
+    const allOpps = document.getElementById('allOpps');
+    if (!container || !allOpps) return;
+
+    if (!opps.length) {
+      const empty = '<p style="color:rgba(255,255,255,0.6);">No opportunities available yet.</p>';
+      container.innerHTML = empty; allOpps.innerHTML = empty; return;
+    }
+
+    const cards = opps.map(opp => `
+      <div class="opp-card">
+        <h3 class="opp-title">${escHtml(opp.title)}</h3>
+        <div class="opp-meta">${escHtml(opp.location)} • ${escHtml(opp.type)} • Ends ${escHtml(opp.deadline)}</div>
+        <p class="opp-desc">${escHtml((opp.description || '').slice(0,120))}…</p>
+        <div class="opp-actions">
+          <button class="btn btn-secondary" onclick="applyOpportunitySafe('${escHtml(opp.id)}')">Apply</button>
+          <button class="btn btn-secondary" onclick="saveOpportunitySafe('${escHtml(opp.id)}')">Save</button>
+        </div>
+      </div>`).join('');
+
+    // Show only 3 in overview, all in opportunities section
+    const top3 = opps.slice(0,3).map(opp => `
+      <div class="opp-card" style="margin-bottom:0.75rem; padding:0.85rem;">
+        <div class="opp-title" style="font-size:0.9rem;">${escHtml(opp.title)}</div>
+        <div class="opp-meta">${escHtml(opp.type)} • ${escHtml(opp.deadline)}</div>
+        <div style="margin-top:0.5rem; display:flex; gap:0.4rem;">
+          <button class="btn btn-secondary" style="font-size:0.78rem; padding:0.3rem 0.7rem;" onclick="applyOpportunitySafe('${escHtml(opp.id)}')">Apply</button>
+          <button class="btn btn-secondary" style="font-size:0.78rem; padding:0.3rem 0.7rem;" onclick="saveOpportunitySafe('${escHtml(opp.id)}')">Save</button>
+        </div>
+      </div>`).join('');
+
+    container.innerHTML = top3;
+    allOpps.innerHTML = `<div class="opp-grid">${cards}</div>`;
+  }
+
+  function renderApplications() {
+    const apps = getSafeArray(window.getStudentApplications, []);
+    const makeTable = arr => arr.length ? `
+      <thead><tr><th>Opportunity</th><th>Date</th><th>Status</th></tr></thead>
+      <tbody>${arr.map(a => `<tr>
+        <td>${escHtml(a.title || a.opportunityTitle || 'Application')}</td>
+        <td>${a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '-'}</td>
+        <td><span class="badge ${getBadgeClass(a.status)}">${escHtml(a.status || 'Submitted')}</span></td>
+      </tr>`).join('')}</tbody>` :
+      '<tbody><tr><td colspan="3" style="color:rgba(255,255,255,0.5); text-align:center; padding:1.5rem;">No applications yet.</td></tr></tbody>';
+
+    const recent = document.getElementById('recentApps');
+    const all = document.getElementById('allApps');
+    if (recent) recent.innerHTML = makeTable(apps.slice(0,5));
+    if (all) all.innerHTML = makeTable(apps);
+  }
+
+  function renderTraining() {
+    const training = getSafeArray(window.getStudentTrainingProgress, []).length
+      ? getSafeArray(window.getStudentTrainingProgress, [])
+      : (typeof trainingsData !== 'undefined' ? trainingsData.map(t => ({ ...t, progress: t.completed || 0 })) : []);
+
+    const content = training.length ? training.map(mod => {
+      const p = Number(mod.progress) || 0;
+      return `<div class="card" style="margin-bottom:1rem;">
+        <h3 style="color:white; margin-bottom:0.75rem;">${escHtml(mod.title)}</h3>
+        <div class="progress"><div class="progress-fill" style="width:${p}%"></div></div>
+        <p style="color:rgba(255,255,255,0.7); margin-top:0.5rem; font-size:0.875rem;">${p}% complete</p>
+        <button class="btn btn-primary" style="margin-top:0.75rem;" onclick="continueTrainingSafe('${escHtml(mod.id || '')}')">Continue</button>
+      </div>`;
+    }).join('') : '<p style="color:rgba(255,255,255,0.6);">No training modules available yet.</p>';
+
+    const overview = document.getElementById('trainingProgress');
+    const all = document.getElementById('allTraining');
+    if (overview) overview.innerHTML = content;
+    if (all) all.innerHTML = content;
+  }
+
+  function renderMentor() {
+    const mentor = getSafeValue(window.getStudentMentor, null);
+    const meetings = getSafeArray(window.getStudentMeetings, []);
+    const mentorInfo = document.getElementById('mentorInfo');
+    const mentorFull = document.getElementById('mentorSectionFull');
+
+    if (!mentor) {
+      const empty = `<div class="mentor-card">
+        <div class="mentor-avatar">👤</div>
+        <h3 style="color:white; margin-bottom:0.5rem;">No mentor assigned yet</h3>
+        <p style="color:rgba(255,255,255,0.65); margin-bottom:1rem;">Request one below when available.</p>
+        <button class="btn btn-primary" onclick="showMeetingForm()">Request Mentor Support</button>
+      </div>`;
+      if (mentorInfo) mentorInfo.innerHTML = empty;
+      if (mentorFull) mentorFull.innerHTML = empty;
+      return;
+    }
+
+    const nextMeeting = meetings.find(m => m.time && new Date(m.time) > new Date());
+    const html = `<div class="mentor-card">
+      <div class="mentor-avatar">👩‍🏫</div>
+      <h3 style="color:white; margin-bottom:0.25rem;">${escHtml(mentor.name || 'Assigned Mentor')}</h3>
+      <p style="color:rgba(255,255,255,0.7); margin-bottom:1rem;">${escHtml(mentor.expertise || 'Mentor')}</p>
+      <p style="color:rgba(255,255,255,0.7); font-size:0.875rem;">Next session: ${nextMeeting ? new Date(nextMeeting.time).toLocaleString() : 'Not scheduled'}</p>
+      <div style="margin-top:1rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-primary" onclick="showMeetingForm()">Book Session</button>
+      </div>
+    </div>`;
+    if (mentorInfo) mentorInfo.innerHTML = html;
+    if (mentorFull) mentorFull.innerHTML = html;
+  }
+
+  function renderMeetings() {
+    const meetings = getSafeArray(window.getStudentMeetings, []);
+    const list = document.getElementById('meetingsList');
+    if (!list) return;
+    list.innerHTML = meetings.length ? meetings.map(m => `
+      <div class="card" style="margin-bottom:0.75rem;">
+        <h3 style="color:white; font-size:0.95rem;">${escHtml(m.title || 'Mentorship Meeting')}</h3>
+        <p style="color:rgba(255,255,255,0.7); font-size:0.875rem; margin-top:0.3rem;">
+          ${m.time ? new Date(m.time).toLocaleString() : 'TBD'} — <span class="badge badge-warning">${escHtml(m.status || 'Requested')}</span>
+        </p>
+        ${m.notes ? `<p style="color:rgba(255,255,255,0.6); font-size:0.85rem; margin-top:0.3rem;">${escHtml(m.notes)}</p>` : ''}
+      </div>`).join('') : '<p style="color:rgba(255,255,255,0.6);">No meetings scheduled yet.</p>';
+  }
+
+  function renderNotifications() {
+    const notes = getSafeArray(window.getStudentNotifications, []);
+    const list = document.getElementById('notificationsList');
+    if (!list) return;
+    list.innerHTML = notes.length ? notes.map(n => `
+      <div class="notification">
+        <div style="font-weight:600;">${escHtml(n.text || 'Notification')}</div>
+        <div style="color:rgba(255,255,255,0.55); font-size:0.8rem; margin-top:0.25rem;">
+          ${n.createdAt ? new Date(n.createdAt).toLocaleString() : ''}
+        </div>
+      </div>`).join('') : '<p style="color:rgba(255,255,255,0.6);">No notifications yet.</p>';
+  }
+
+  function initStats() {
+    const opps = getSafeArray(window.getOpportunities, []);
+    const apps = getSafeArray(window.getStudentApplications, []);
+    const saved = getSafeArray(window.getStudentSavedOpportunities, []);
+    const training = (typeof trainingsData !== 'undefined' ? trainingsData : []);
+    const avgTraining = training.length
+      ? Math.round(training.reduce((s, t) => s + (Number(t.completed || t.progress) || 0), 0) / training.length) : 0;
+
+    document.querySelector('[data-stat="opps"]')?.replaceChildren(document.createTextNode(opps.length));
+    document.querySelector('[data-stat="apps"]')?.replaceChildren(document.createTextNode(apps.length));
+    document.querySelector('[data-stat="saved"]')?.replaceChildren(document.createTextNode(saved.length));
+    document.querySelector('[data-stat="training"]')?.replaceChildren(document.createTextNode(avgTraining + '%'));
+  }
+
+  function initNavigation() {
+    const navButtons = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.content-section');
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.section;
+        navButtons.forEach(b => b.classList.remove('active'));
+        sections.forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(target)?.classList.add('active');
+      });
+    });
+  }
+
+  function initMeetingForm() {
+    const form = document.getElementById('meetingForm');
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const date = document.getElementById('meetingDate').value;
+      const notes = document.getElementById('meetingNotes').value.trim();
+      if (!date) { showToast('Please choose a meeting date.', 'error'); return; }
+
+      const meetings = JSON.parse(localStorage.getItem('isop_col_meetings') || '[]');
+      const auth = getCurrentUserSafe();
+      meetings.push({ id: `meeting_${Date.now()}`, userId: auth?.id, time: date, notes, status: 'Requested', createdAt: new Date().toISOString() });
+      localStorage.setItem('isop_col_meetings', JSON.stringify(meetings));
+
+      showToast('Meeting requested successfully!', 'success');
+      form.reset();
+      renderMeetings();
+    });
+  }
+
+  function showMeetingForm() {
+    document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+    document.querySelector('.nav-link[data-section="meetings"]')?.classList.add('active');
+    document.getElementById('meetings')?.classList.add('active');
+    document.getElementById('meetingDate')?.focus();
+  }
+
+  // Opportunity search
+  function initOppSearch() {
+    const input = document.getElementById('oppSearchInput');
+    if (!input) return;
+    input.addEventListener('input', () => {
+      const q = input.value.toLowerCase();
+      document.querySelectorAll('#allOpps .opp-card').forEach(card => {
+        card.style.display = card.textContent.toLowerCase().includes(q) ? '' : 'none';
+      });
+    });
+  }
+
+  function logoutStudent() {
+    clearCurrentUserSafe();
+    window.location.href = 'login.html';
+  }
+
+  function applyOpportunitySafe(id) {
+    window.location.href = 'apply.html?oppId=' + encodeURIComponent(id);
+  }
+
+  function saveOpportunitySafe(id) {
+    if (typeof window.saveOpportunity === 'function') {
+      const saved = window.saveOpportunity(id);
+      showToast(saved ? 'Opportunity saved!' : 'Already saved.', saved ? 'success' : '');
+    } else {
+      showToast('Saved!', 'success');
+    }
+    initStats();
+  }
+
+  function continueTrainingSafe(id) {
+    showToast('Training module coming soon!');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const user = checkAuth();
+    if (!user) return;
+
+    const welcomeEl = document.getElementById('welcomeUser');
+    if (welcomeEl) welcomeEl.textContent = 'Hi, ' + (user.name || user.email);
+
+    initStats();
+    renderRecommendedOpportunities();
+    renderApplications();
+    renderTraining();
+    renderMentor();
+    renderMeetings();
+    renderNotifications();
+    initNavigation();
+    initMeetingForm();
+    initOppSearch();
+  });
+  </script>
+</body>
+</html>

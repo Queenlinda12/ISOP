@@ -1,95 +1,113 @@
-// Supabase Backend Integration
-// Update SUPABASE_URL and SUPABASE_ANON_KEY with your values
+// Backend integration - uses supabaseClient from supabase.js
+// Requires supabase.js to be loaded first
 
-const SUPABASE_URL = 'https://hwepgzdwoiojdwnebvhi.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh3ZXBnemR3b2lvamR3bmVidmh5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE3NTI2MjgsImV4cCI6MjA0NzM6ODIyOH0.YOUR_TOKEN_HERE' // Replace with your anon key
-
-import { createClient } from '@supabase/supabase-js'
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-
-export async function login(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  })
-  return { data, error }
+async function login(email, password) {
+  try {
+    if (window.supabaseClient) {
+      const { data, error } = await window.supabaseClient.auth.signInWithPassword({ email, password })
+      return { data, error }
+    }
+  } catch (e) {
+    console.warn('Supabase login failed:', e)
+  }
+  return { data: null, error: new Error('Supabase not available') }
 }
 
-export async function register(email, password) {
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password
-  })
-  return { data, error }
+async function register(email, password) {
+  try {
+    if (window.supabaseClient) {
+      const { data, error } = await window.supabaseClient.auth.signUp({ email, password })
+      return { data, error }
+    }
+  } catch (e) {
+    console.warn('Supabase register failed:', e)
+  }
+  return { data: null, error: new Error('Supabase not available') }
 }
 
-export async function logout() {
-  const { error } = await supabase.auth.signOut()
-  return error
+async function logout() {
+  try {
+    if (window.supabaseClient) {
+      const { error } = await window.supabaseClient.auth.signOut()
+      return error
+    }
+  } catch (e) {
+    console.warn('Supabase logout failed:', e)
+  }
+  return null
 }
 
-export async function getUser() {
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
+async function getUser() {
+  try {
+    if (window.supabaseClient) {
+      const { data: { user } } = await window.supabaseClient.auth.getUser()
+      return user
+    }
+  } catch (e) {
+    console.warn('getUser failed:', e)
+  }
+  return null
 }
 
-export async function getDashboardData(user) {
-  // Fetch user data from Supabase
-  const { data: applications } = await supabase
-    .from('applications')
-    .select('*')
-    .eq('user_id', user.id)
-  
-  const { data: opportunities } = await supabase
-    .from('opportunities')
-    .select('id, title, type, location')
-    .limit(3)
-  
-  return {
-    applications: applications || [],
-    opportunities: opportunities || [],
-    stats: {
-      totalApps: applications?.length || 0,
-      totalOpps: opportunities?.length || 0
+async function getDashboardData(user) {
+  if (!window.supabaseClient) return { applications: [], opportunities: [], stats: { totalApps: 0, totalOpps: 0 } }
+
+  try {
+    const { data: applications } = await window.supabaseClient
+      .from('applications')
+      .select('*, opportunity:opportunity_id(title, type)')
+      .eq('user_id', user.id)
+
+    const { data: opportunities } = await window.supabaseClient
+      .from('opportunities')
+      .select('*')
+      .limit(6)
+
+    return {
+      applications: applications || [],
+      opportunities: opportunities || [],
+      stats: {
+        totalApps: applications?.length || 0,
+        totalOpps: opportunities?.length || 0
+      }
+    }
+  } catch (e) {
+    console.warn('getDashboardData failed:', e)
+    return { applications: [], opportunities: [], stats: { totalApps: 0, totalOpps: 0 } }
+  }
+}
+
+// Submit application — tries Supabase first, falls back to localStorage
+async function submitApplication(userId, oppId, cvFile, experience, accessibility) {
+  // Try Supabase upload
+  if (window.supabaseClient && cvFile) {
+    try {
+      return await applyWithCV(userId, oppId, cvFile, experience, accessibility)
+    } catch (e) {
+      console.warn('Supabase application failed, saving locally:', e)
     }
   }
-}
 
-// === MENTOR BACKEND INTEGRATION ===
-export async function getMentorReviews(userId) {
-  try {
-    return await getMyReviews(userId)
-  } catch (error) {
-    console.error('Error fetching reviews:', error)
-    return []
+  // Local fallback
+  const app = {
+    id: `app_${Date.now()}`,
+    userId,
+    opportunityId: oppId,
+    experience: experience || '',
+    accessibility: accessibility || '',
+    status: 'Submitted',
+    submittedAt: new Date().toISOString()
   }
+
+  const apps = JSON.parse(localStorage.getItem('isop_col_applications') || '[]')
+  apps.unshift(app)
+  localStorage.setItem('isop_col_applications', JSON.stringify(apps))
+  return app
 }
 
-export async function getMentorMentees(userId) {
-  try {
-    return await getMyMentees(userId)
-  } catch (error) {
-    console.error('Error fetching mentees:', error)
-    return []
-  }
-}
-
-export async function createMeeting(mentorId, menteeId, datetime, notes) {
-  try {
-    return await scheduleMeeting(mentorId, menteeId, datetime, notes)
-  } catch (error) {
-    console.error('Error scheduling meeting:', error)
-    throw error
-  }
-}
-
-export async function uploadMentorResource(mentorId, title, desc, file) {
-  try {
-    return await uploadResource(mentorId, title, desc, file)
-  } catch (error) {
-    console.error('Error uploading resource:', error)
-    throw error
-  }
-}
-
-
+window.login = login
+window.register = register
+window.logout = logout
+window.getUser = getUser
+window.getDashboardData = getDashboardData
+window.submitApplication = submitApplication

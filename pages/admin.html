@@ -3,328 +3,339 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard • ISOP+</title>
+  <title>Admin Dashboard - ISOP+</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
+    :root {
+      --sidebar-width: 270px;
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --sidebar-bg: #0f172a;
+      --sidebar-hover: #1e293b;
+      --accent: #3b82f6;
+      --accent-2: #60a5fa;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --warning: #f59e0b;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
     * {
-      margin: 0;
-      padding: 0;
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
     }
 
     body {
-      background: #f5f7fb;
-      color: #1e293b;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
     }
 
-    .dashboard {
+    .admin-layout {
       display: flex;
       min-height: 100vh;
-      width: 100%;
     }
 
     .sidebar {
-      width: 250px;
-      background: #0f172a;
+      width: var(--sidebar-width);
+      background: var(--sidebar-bg);
       color: white;
-      padding: 24px 18px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
       position: sticky;
       top: 0;
       height: 100vh;
+      overflow: hidden;
+    }
+
+    .logo {
+      padding: 1.6rem 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      letter-spacing: 0.3px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      padding: 1rem 0.8rem;
+      gap: 0.35rem;
       overflow-y: auto;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      width: 100%;
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 0.95rem 1rem;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 600;
+      text-align: left;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: var(--sidebar-hover);
+      color: white;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: white;
+      box-shadow: inset 4px 0 0 white;
+    }
+
+    .nav-icon {
+      width: 1.4rem;
+      text-align: center;
+      font-size: 1.1rem;
       flex-shrink: 0;
     }
 
-    .sidebar h2 {
-      font-size: 24px;
-      margin-bottom: 30px;
-    }
-
-    .sidebar .logo span {
-      color: #38bdf8;
-    }
-
-    .sidebar ul {
-      list-style: none;
-    }
-
-    .sidebar ul li {
-      margin: 12px 0;
-    }
-
-    .sidebar ul li button {
-      width: 100%;
-      text-align: left;
-      background: none;
-      border: none;
-      color: #cbd5e1;
-      display: block;
-      padding: 12px 14px;
-      border-radius: 10px;
-      transition: 0.3s;
-      cursor: pointer;
-      font-size: 15px;
-    }
-
-    .sidebar ul li button:hover,
-    .sidebar ul li button.active {
-      background: #1e293b;
-      color: white;
+    .logout-wrap {
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .logout-btn {
-      margin-top: 30px;
-      background: #ef4444;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 10px;
-      cursor: pointer;
-      width: 100%;
-      font-weight: bold;
+      color: #fecaca;
     }
 
-    .main-content {
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.14);
+      color: white;
+    }
+
+    .main {
       flex: 1;
-      padding: 24px;
-      overflow-y: auto;
-      width: 100%;
+      padding: 2rem;
+      overflow-x: hidden;
     }
 
-    #main {
-      padding: 0 !important;
+    .page-header {
+      margin-bottom: 1.5rem;
     }
 
-    .site-main {
-      padding: 0 !important;
+    .page-header h1 {
+      margin: 0 0 0.45rem;
+      font-size: 2rem;
     }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 20px;
-      flex-wrap: wrap;
+    .page-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
     }
 
-    .topbar h1 {
-      font-size: 28px;
-      margin-bottom: 6px;
+    .section {
+      display: none !important;
     }
 
-    .topbar p {
-      color: #64748b;
-      font-size: 15px;
-    }
-
-    .topbar-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn-primary {
-      background: #0f172a;
-      color: white;
-    }
-
-    .btn-secondary {
-      background: white;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
+    .section.active {
+      display: block !important;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 18px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card,
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
 
     .stat-card {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 1.2rem 1.25rem;
     }
 
     .stat-card h3 {
-      font-size: 14px;
-      color: #64748b;
-      margin-bottom: 8px;
+      margin: 0 0 0.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
     }
 
-    .stat-card .number {
-      font-size: 28px;
-      font-weight: bold;
-      color: #0f172a;
+    .stat-value {
+      font-size: 1.9rem;
+      font-weight: 800;
+      color: var(--text);
     }
 
-    .dashboard-grid {
+    .content-grid {
       display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin-bottom: 24px;
-    }
-
-    .bottom-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
     }
 
     .card {
-      background: white;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      padding: 1.4rem;
     }
 
     .card h2 {
-      font-size: 20px;
-      margin-bottom: 14px;
+      margin: 0 0 1rem;
+      font-size: 1.2rem;
     }
 
     .card h3 {
-      font-size: 17px;
-      margin-bottom: 12px;
+      margin: 0 0 0.8rem;
+      font-size: 1rem;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      min-width: 520px;
     }
 
-    table th,
-    table td {
+    th,
+    td {
       text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 14px;
+      padding: 0.9rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
     }
 
-    table th {
-      color: #475569;
-      font-size: 13px;
+    th {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: #f8fafc;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
     }
 
     .badge {
-      padding: 6px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: bold;
       display: inline-block;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
     }
 
-    .pending {
-      background: #fef3c7;
-      color: #92400e;
-    }
-
-    .approved {
+    .badge.active {
       background: #dcfce7;
       color: #166534;
     }
 
-    .rejected {
+    .badge.pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .badge.approved {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge.rejected {
       background: #fee2e2;
       color: #991b1b;
     }
 
-    .quick-actions {
-      display: grid;
-      gap: 12px;
-    }
-
-    .quick-actions button {
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      background: #e2e8f0;
-      cursor: pointer;
-      font-weight: bold;
-      text-align: left;
-    }
-
-    .list-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 14px;
-    }
-
-    .list-item:last-child {
-      border-bottom: none;
-    }
-
-    .small-text {
-      color: #64748b;
-      font-size: 13px;
-      margin-top: 4px;
-    }
-
-    .content-section {
-      display: none;
-    }
-
-    .content-section.active {
-      display: block;
-    }
-
     .form-grid {
       display: grid;
-      gap: 14px;
+      gap: 1rem;
       max-width: 700px;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 0.45rem;
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      padding: 12px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 14px;
+    .form-group label {
+      font-weight: 600;
+      font-size: 0.92rem;
     }
 
-    .action-row {
+    .form-control {
+      width: 100%;
+      padding: 0.85rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      background: white;
+      color: var(--text);
+    }
+
+    .btn-row {
       display: flex;
-      gap: 10px;
+      gap: 0.75rem;
       flex-wrap: wrap;
-      margin-top: 10px;
     }
 
-    @media (max-width: 992px) {
-      .dashboard-grid,
-      .bottom-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        width: 200px;
-        padding: 18px;
-      }
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 0.8rem 1.1rem;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.94rem;
     }
 
-    @media (max-width: 768px) {
-      .dashboard {
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .list {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .list-item {
+      padding: 0.95rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fafcff;
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 900px) {
+      .admin-layout {
         flex-direction: column;
       }
 
@@ -334,566 +345,401 @@
         position: static;
       }
 
-      .main-content {
-        padding: 18px;
+      .sidebar-nav {
+        overflow: visible;
+      }
+
+      .main {
+        padding: 1.2rem;
+      }
+
+      .page-header h1 {
+        font-size: 1.6rem;
       }
     }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to main content</a>
-
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="../index.html">
-        <span class="brand__logo" aria-hidden="true">🌟</span>
-        <span class="brand__name">ISOP+</span>
-      </a>
-
-      <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-        <span class="nav-toggle__bar"></span>
-      </button>
-
-      <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
-        <ul class="nav-list">
-          <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
-          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-          <li class="nav-item"><a href="opportunities.html" class="nav-link">Opportunities</a></li>
-          <li class="nav-item"><a href="admin.html" class="nav-link">Admin</a></li>
-        </ul>
-      </nav>
-
-      <div id="header-actions" class="header-actions">
-        <a class="btn btn--secondary" href="login.html">Login</a>
-        <a class="btn btn--primary" href="register.html">Register</a>
-      </div>
-    </div>
-  </header>
-
-  <main id="main" class="site-main" style="padding: 0;">
-  <div class="dashboard" id="adminDashboard" style="display: none;">
+  <div class="admin-layout">
     <aside class="sidebar">
-      <div>
-        <div class="logo">
-          <h2>ISOP<span>+</span></h2>
+      <div class="logo">ISOP+ Admin</div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-section="dashboard">
+          <span class="nav-icon">📊</span>
+          <span>Dashboard</span>
+        </button>
+
+        <button class="nav-btn" data-section="users">
+          <span class="nav-icon">👥</span>
+          <span>Users</span>
+        </button>
+
+        <button class="nav-btn" data-section="applications">
+          <span class="nav-icon">📋</span>
+          <span>Applications</span>
+        </button>
+
+        <button class="nav-btn" data-section="opportunities">
+          <span class="nav-icon">🎯</span>
+          <span>Opportunities</span>
+        </button>
+
+        <button class="nav-btn" data-section="training">
+          <span class="nav-icon">📚</span>
+          <span>Training Content</span>
+        </button>
+
+        <button class="nav-btn" data-section="mentorship">
+          <span class="nav-icon">👨‍🏫</span>
+          <span>Mentorship</span>
+        </button>
+
+        <button class="nav-btn" data-section="reports">
+          <span class="nav-icon">📈</span>
+          <span>Reports</span>
+        </button>
+
+        <button class="nav-btn" data-section="settings">
+          <span class="nav-icon">⚙️</span>
+          <span>Settings</span>
+        </button>
+
+        <div class="logout-wrap">
+          <button class="nav-btn logout-btn" id="logoutBtn">
+            <span class="nav-icon">🚪</span>
+            <span>Logout</span>
+          </button>
         </div>
-
-        <ul>
-          <li><button class="nav-link active" data-section="dashboard-section">Dashboard</button></li>
-          <li><button class="nav-link" data-section="users-section">Users</button></li>
-          <li><button class="nav-link" data-section="applications-section">Applications</button></li>
-          <li><button class="nav-link" data-section="opportunities-section">Opportunities</button></li>
-          <li><button class="nav-link" data-section="training-section">Training Content</button></li>
-          <li><button class="nav-link" data-section="mentorship-section">Mentorship</button></li>
-          <li><button class="nav-link" data-section="reports-section">Reports</button></li>
-          <li><button class="nav-link" data-section="settings-section">Settings</button></li>
-        </ul>
-      </div>
-
-      <button class="logout-btn" id="adminLogout">Logout</button>
+      </nav>
     </aside>
 
-    <section class="main-content">
-      <!-- DASHBOARD -->
-      <section id="dashboard-section" class="content-section active">
-        <div class="topbar">
-          <div>
-            <h1>Admin Dashboard</h1>
-            <p>Monitor platform activity, manage users, review applications, and oversee opportunities from one central workspace.</p>
-          </div>
-          <div class="topbar-actions">
-            <button class="btn btn-secondary">Export Report</button>
-            <button class="btn btn-primary">+ Add Opportunity</button>
-          </div>
-        </div>
-
-        <section class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Users</h3>
-            <div class="number">1,284</div>
-          </div>
-          <div class="stat-card">
-            <h3>Active Applications</h3>
-            <div class="number">326</div>
-          </div>
-          <div class="stat-card">
-            <h3>Open Opportunities</h3>
-            <div class="number">41</div>
-          </div>
-          <div class="stat-card">
-            <h3>Pending Approvals</h3>
-            <div class="number">24</div>
-          </div>
-        </section>
-
-        <section class="dashboard-grid">
-          <div class="card">
-            <h2>Recent Applications</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>Applicant</th>
-                  <th>Opportunity</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Amina Uwase</td>
-                  <td>Frontend Internship</td>
-                  <td><span class="badge pending">Pending</span></td>
-                  <td>12 Feb 2026</td>
-                </tr>
-                <tr>
-                  <td>Claudine Ishimwe</td>
-                  <td>Women in Tech Scholarship</td>
-                  <td><span class="badge approved">Approved</span></td>
-                  <td>11 Feb 2026</td>
-                </tr>
-                <tr>
-                  <td>Grace Mukamana</td>
-                  <td>Startup Support Program</td>
-                  <td><span class="badge rejected">Rejected</span></td>
-                  <td>10 Feb 2026</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="card">
-            <h2>Quick Actions</h2>
-            <div class="quick-actions">
-              <button>Review Pending Applications</button>
-              <button>Add New Opportunity</button>
-              <button>Manage Users</button>
-              <button>Upload Training Content</button>
-              <button>Generate Monthly Report</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="bottom-grid">
-          <div class="card">
-            <h2>User Management</h2>
-            <div class="list-item">
-              24 new user accounts awaiting verification
-              <div class="small-text">Review and approve new registrations.</div>
-            </div>
-            <div class="list-item">
-              3 mentor accounts waiting for approval
-              <div class="small-text">Check mentor profiles and qualifications.</div>
-            </div>
-            <div class="list-item">
-              2 flagged accounts need attention
-              <div class="small-text">Review suspicious activity or incomplete information.</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h2>Reports & Analytics</h2>
-            <div class="list-item">
-              112 applications approved this month
-              <div class="small-text">Strong growth in platform participation.</div>
-            </div>
-            <div class="list-item">
-              78% average training completion rate
-              <div class="small-text">Users are actively engaging with training content.</div>
-            </div>
-            <div class="list-item">
-              64 new opportunities posted this quarter
-              <div class="small-text">More access to jobs, internships, and scholarships.</div>
-            </div>
-          </div>
-        </section>
-      </section>
-
-      <!-- USERS -->
-      <section id="users-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Users</h1>
-            <p>Manage registered users, mentors, and account approvals.</p>
-          </div>
-          <div class="topbar-actions">
-            <button class="btn btn-primary">+ Add User</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>All Users</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Email</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Sheja Linda</td>
-                <td>Student</td>
-                <td>linda@example.com</td>
-                <td><span class="badge approved">Active</span></td>
-              </tr>
-              <tr>
-                <td>Diane Uwase</td>
-                <td>Mentor</td>
-                <td>diane@example.com</td>
-                <td><span class="badge pending">Pending Approval</span></td>
-              </tr>
-              <tr>
-                <td>Admin One</td>
-                <td>Admin</td>
-                <td>admin@example.com</td>
-                <td><span class="badge approved">Active</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- APPLICATIONS -->
-      <section id="applications-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Applications</h1>
-            <p>Review, approve, or reject submitted applications.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Submitted Applications</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Applicant</th>
-                <th>Program</th>
-                <th>Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Amina Uwase</td>
-                <td>Frontend Internship</td>
-                <td>12 Feb 2026</td>
-                <td><span class="badge pending">Pending</span></td>
-              </tr>
-              <tr>
-                <td>Grace Mukamana</td>
-                <td>Startup Support Program</td>
-                <td>10 Feb 2026</td>
-                <td><span class="badge rejected">Rejected</span></td>
-              </tr>
-              <tr>
-                <td>Claudine Ishimwe</td>
-                <td>Women in Tech Scholarship</td>
-                <td>11 Feb 2026</td>
-                <td><span class="badge approved">Approved</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- OPPORTUNITIES -->
-      <section id="opportunities-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Opportunities</h1>
-            <p>Create, update, and manage opportunities posted on the platform.</p>
-          </div>
-          <div class="topbar-actions">
-            <button class="btn btn-primary">+ New Opportunity</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Add Opportunity</h2>
-          <div class="form-grid">
-            <div class="form-group">
-              <label>Opportunity Title</label>
-              <input type="text" placeholder="Enter opportunity title">
-            </div>
-            <div class="form-group">
-              <label>Organization</label>
-              <input type="text" placeholder="Enter organization name">
-            </div>
-            <div class="form-group">
-              <label>Category</label>
-              <select>
-                <option>Internship</option>
-                <option>Scholarship</option>
-                <option>Job</option>
-                <option>Training</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Description</label>
-              <textarea rows="4" placeholder="Write opportunity details"></textarea>
-            </div>
-            <div class="action-row">
-              <button class="btn btn-primary">Save Opportunity</button>
-              <button class="btn btn-secondary">Clear</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- TRAINING -->
-      <section id="training-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Training Content</h1>
-            <p>Upload and manage learning resources and training modules.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Training Modules</h2>
-          <div class="list-item">
-            CV Writing Basics
-            <div class="small-text">Published • 120 learners enrolled</div>
-          </div>
-          <div class="list-item">
-            Interview Preparation
-            <div class="small-text">Published • 95 learners enrolled</div>
-          </div>
-          <div class="list-item">
-            Entrepreneurship Foundations
-            <div class="small-text">Draft • Not yet published</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- MENTORSHIP -->
-      <section id="mentorship-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Mentorship</h1>
-            <p>Manage mentors, mentees, and session coordination.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>Mentor Management</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Mentor</th>
-                <th>Specialization</th>
-                <th>Mentees</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Diane Uwase</td>
-                <td>Career Development</td>
-                <td>12</td>
-                <td><span class="badge approved">Active</span></td>
-              </tr>
-              <tr>
-                <td>Patrick Ndayisaba</td>
-                <td>Entrepreneurship</td>
-                <td>8</td>
-                <td><span class="badge pending">Pending</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- REPORTS -->
-      <section id="reports-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Reports</h1>
-            <p>Track platform performance, participation, and completion trends.</p>
-          </div>
+    <main class="main">
+      <section id="dashboard" class="section active">
+        <div class="page-header">
+          <h1>Dashboard Overview</h1>
+          <p>Monitor users, opportunities, applications, and platform activity from one place.</p>
         </div>
 
         <div class="stats-grid">
           <div class="stat-card">
-            <h3>Total Approved Applications</h3>
-            <div class="number">112</div>
+            <h3>Total Users</h3>
+            <div class="stat-value">284</div>
           </div>
           <div class="stat-card">
-            <h3>Training Completion Rate</h3>
-            <div class="number">78%</div>
+            <h3>Applications</h3>
+            <div class="stat-value">126</div>
           </div>
           <div class="stat-card">
-            <h3>New Users This Month</h3>
-            <div class="number">94</div>
+            <h3>Open Opportunities</h3>
+            <div class="stat-value">23</div>
           </div>
           <div class="stat-card">
-            <h3>Mentorship Sessions</h3>
-            <div class="number">43</div>
+            <h3>Pending Reviews</h3>
+            <div class="stat-value">18</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="card">
+            <h2>Recent Activity</h2>
+            <div class="list">
+              <div class="list-item">
+                <strong>Amina applied for UX Internship</strong>
+                <span class="muted">2 hours ago</span>
+              </div>
+              <div class="list-item">
+                <strong>Diane requested mentor support</strong>
+                <span class="muted">Today</span>
+              </div>
+              <div class="list-item">
+                <strong>New training module published</strong>
+                <span class="muted">Yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Quick Actions</h2>
+            <div class="btn-row">
+              <button class="btn btn-primary" onclick="goToSection('opportunities')">Add Opportunity</button>
+              <button class="btn btn-secondary" onclick="goToSection('applications')">Review Applications</button>
+              <button class="btn btn-secondary" onclick="goToSection('users')">Manage Users</button>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- SETTINGS -->
-      <section id="settings-section" class="content-section">
-        <div class="topbar">
-          <div>
-            <h1>Settings</h1>
-            <p>Update platform settings, notifications, and admin preferences.</p>
-          </div>
+      <section id="users" class="section">
+        <div class="page-header">
+          <h1>Users Management</h1>
+          <p>View and manage students, mentors, and administrators.</p>
         </div>
 
         <div class="card">
-          <h2>System Settings</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>student@isop.com</td>
+                  <td>Student</td>
+                  <td><span class="badge active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>mentor@isop.com</td>
+                  <td>Mentor</td>
+                  <td><span class="badge active">Active</span></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>admin@isop.com</td>
+                  <td>Admin</td>
+                  <td><span class="badge active">Active</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="applications" class="section">
+        <div class="page-header">
+          <h1>Applications</h1>
+          <p>Review submitted applications and their current status.</p>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Opportunity</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Amina</td>
+                  <td>UX Internship</td>
+                  <td>2026-01-15</td>
+                  <td><span class="badge pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td>John</td>
+                  <td>Frontend Dev</td>
+                  <td>2026-01-14</td>
+                  <td><span class="badge approved">Approved</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="opportunities" class="section">
+        <div class="page-header">
+          <h1>Opportunities</h1>
+          <p>Create and manage opportunities available on the platform.</p>
+        </div>
+
+        <div class="card">
+          <h2>Add New Opportunity</h2>
           <div class="form-grid">
             <div class="form-group">
-              <label>Platform Name</label>
-              <input type="text" value="ISOP+">
+              <label for="opp-title">Title</label>
+              <input id="opp-title" class="form-control" placeholder="Enter opportunity title" />
             </div>
+            <div class="btn-row">
+              <button class="btn btn-primary">Add Opportunity</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 1rem;">
+          <h2>Current Opportunities</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>UX Internship</td>
+                  <td><span class="badge approved">Open</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="training" class="section">
+        <div class="page-header">
+          <h1>Training Content</h1>
+          <p>Track learning modules and monitor progress.</p>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Module</th>
+                  <th>Progress</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>UX Design</td>
+                  <td>85%</td>
+                </tr>
+                <tr>
+                  <td>Career Skills</td>
+                  <td>60%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="mentorship" class="section">
+        <div class="page-header">
+          <h1>Mentorship</h1>
+          <p>Monitor mentors and their assigned mentees.</p>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mentor</th>
+                  <th>Mentees</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Sarah</td>
+                  <td>5</td>
+                </tr>
+                <tr>
+                  <td>Mike</td>
+                  <td>3</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="reports" class="section">
+        <div class="page-header">
+          <h1>Reports</h1>
+          <p>View high-level system metrics and activity summaries.</p>
+        </div>
+
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Total Users</td>
+                  <td>284</td>
+                </tr>
+                <tr>
+                  <td>Applications Submitted</td>
+                  <td>126</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="settings" class="section">
+        <div class="page-header">
+          <h1>Settings</h1>
+          <p>Manage core platform settings and configuration.</p>
+        </div>
+
+        <div class="card">
+          <div class="form-grid">
             <div class="form-group">
-              <label>Admin Email</label>
-              <input type="email" value="admin@isop.com">
+              <label for="platform-name">Platform Name</label>
+              <input id="platform-name" class="form-control" value="ISOP+" />
             </div>
-            <div class="form-group">
-              <label>Notification Preference</label>
-              <select>
-                <option>Email Alerts</option>
-                <option>Dashboard Only</option>
-                <option>Both</option>
-              </select>
-            </div>
-            <div class="action-row">
+            <div class="btn-row">
               <button class="btn btn-primary">Save Settings</button>
             </div>
           </div>
         </div>
       </section>
-    </section>
-  </div>
-  </main>
-
-  <div id="adminUnauthorized" style="display: none; padding: 3rem 1.25rem; text-align: center; min-height: 60vh; display: flex; align-items: center; justify-content: center;">
-    <div>
-      <h1 class="section-title">Access Denied</h1>
-      <p class="section-lead" style="margin-bottom: 2rem;">You must be logged in as an administrator to access this page.</p>
-      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-        <a class="btn btn--primary" href="login.html">Go to Login</a>
-        <a class="btn btn--secondary" href="../index.html">Go Home</a>
-      </div>
-    </div>
+    </main>
   </div>
 
-  <footer class="site-footer" role="contentinfo">
-    <div class="container footer__inner">
-      <div class="footer-brand">
-        <span class="brand__logo" aria-hidden="true">🌟</span>
-        <span class="brand__name">ISOP+</span>
-        <p class="footer__text">Building a more inclusive future through skills, access, and support.</p>
-      </div>
-
-      <div class="footer-links">
-        <div class="footer-column">
-          <h3 class="footer-heading">Platform</h3>
-          <ul class="footer-list">
-            <li><a href="opportunities.html">Opportunities</a></li>
-            <li><a href="training.html">Training</a></li>
-            <li><a href="mentorship.html">Mentorship</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-column">
-          <h3 class="footer-heading">Company</h3>
-          <ul class="footer-list">
-            <li><a href="about.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-column">
-          <h3 class="footer-heading">Get Help</h3>
-          <ul class="footer-list">
-            <li><a href="login.html">Login</a></li>
-            <li><a href="register.html">Register</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-column footer-contact">
-          <h3 class="footer-heading">Contact</h3>
-          <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
-          <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
-        </div>
-      </div>
-
-      <div class="footer-legal">
-        <p>&copy; 2026 ISOP+. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="../assets/js/main.js"></script>
   <script>
-    // Check if user is authenticated and has admin role
-    function checkAdminAccess() {
-      const auth = getAuth();
-      const dashboard = document.getElementById('adminDashboard');
-      const unauthorized = document.getElementById('adminUnauthorized');
-      
-      if (!auth || auth.role !== 'admin') {
-        // Hide dashboard and show unauthorized message
-        if (dashboard) dashboard.style.display = 'none';
-        if (unauthorized) unauthorized.style.display = 'flex';
-        return false;
-      }
-      
-      // Show dashboard
-      if (dashboard) dashboard.style.display = 'flex';
-      if (unauthorized) unauthorized.style.display = 'none';
-      return true;
+    function getAuthUser() {
+      const auth = localStorage.getItem('isop_auth');
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (auth) return JSON.parse(auth);
+      if (currentUser) return JSON.parse(currentUser);
+      return null;
     }
 
-    // Admin dashboard navigation
-    function initAdminDashboard() {
-      const navLinks = document.querySelectorAll('.sidebar .nav-link');
-      const sections = document.querySelectorAll('.content-section');
+    function goToSection(sectionId) {
+      document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.section === sectionId);
+      });
 
-      navLinks.forEach(button => {
-        button.addEventListener('click', () => {
-          const target = button.getAttribute('data-section');
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.toggle('active', section.id === sectionId);
+      });
+    }
 
-          navLinks.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
+    function logoutAdmin() {
+      localStorage.removeItem('isop_auth');
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    }
 
-          sections.forEach(section => {
-            section.classList.remove('active');
-          });
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = getAuthUser();
 
-          document.getElementById(target).classList.add('active');
+      if (!user || user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          goToSection(btn.dataset.section);
         });
       });
 
-      // Logout button with auth integration
-      const logoutBtn = document.getElementById('adminLogout');
-      if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => {
-          clearAuth();
-          window.location.href = '../index.html';
-        });
-      }
-    }
-
-    // Initialize admin page
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        if (checkAdminAccess()) {
-          initAdminDashboard();
-        }
-      }, 100);
+      document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
     });
   </script>
 </body>

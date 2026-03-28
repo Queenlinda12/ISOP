@@ -3,183 +3,690 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mentor Tools • ISOP+</title>
+  <title>Mentor Dashboard • ISOP+</title>
   <link rel="stylesheet" href="../assets/css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); min-height: 100vh; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+
+    /* Header */
+    .dash-header { background: rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0 1.5rem; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); }
+    .dash-brand { font-size: 1.35rem; font-weight: 800; color: white; text-decoration: none; }
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+    .mentor-name { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+    .btn-logout { padding: 0.45rem 1rem; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; font-size: 0.85rem; transition: all 0.2s; }
+    .btn-logout:hover { background: rgba(239,68,68,0.15); border-color: #ef4444; color: #ef4444; }
+
+    /* Layout */
+    .page-wrap { display: flex; min-height: calc(100vh - 64px); }
+
+    /* Sidebar */
+    .sidebar { width: 220px; flex-shrink: 0; background: rgba(255,255,255,0.04); border-right: 1px solid rgba(255,255,255,0.07); padding: 1.25rem 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; position: sticky; top: 64px; height: calc(100vh - 64px); overflow-y: auto; }
+    .nav-btn { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 0.7rem 1rem; border: none; background: transparent; color: rgba(255,255,255,0.6); border-radius: 10px; cursor: pointer; font-size: 0.9rem; text-align: left; transition: all 0.2s; }
+    .nav-btn:hover { background: rgba(255,255,255,0.07); color: white; }
+    .nav-btn.active { background: rgba(45,140,255,0.2); color: #60a5fa; font-weight: 600; }
+    .nav-badge { margin-left: auto; background: #ef4444; color: white; border-radius: 99px; font-size: 0.7rem; font-weight: 700; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+
+    /* Main */
+    .main-content { flex: 1; padding: 1.75rem; overflow-y: auto; }
+    .tab-section { display: none; }
+    .tab-section.active { display: block; }
+    .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .section-sub { color: rgba(255,255,255,0.5); font-size: 0.875rem; margin-bottom: 1.5rem; }
+
+    /* Stats row */
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 1rem; margin-bottom: 1.75rem; }
+    .stat-box { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.09); border-radius: 14px; padding: 1.1rem; text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 700; }
+    .stat-lbl { color: rgba(255,255,255,0.55); font-size: 0.78rem; margin-top: 0.2rem; }
+    .stat-box.green .stat-num { color: #34d399; }
+    .stat-box.blue  .stat-num { color: #60a5fa; }
+    .stat-box.amber .stat-num { color: #fbbf24; }
+    .stat-box.purple .stat-num { color: #a78bfa; }
+
+    /* Cards */
+    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.09); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: rgba(255,255,255,0.9); display: flex; align-items: center; gap: 0.5rem; }
+
+    /* Meeting cards */
+    .meeting-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: flex-start; gap: 1rem; }
+    .meeting-card .meet-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .meeting-card .meet-body { flex: 1; min-width: 0; }
+    .meet-mentee { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .meet-time { color: rgba(255,255,255,0.55); font-size: 0.82rem; margin-bottom: 0.4rem; }
+    .meet-notes { color: rgba(255,255,255,0.7); font-size: 0.85rem; font-style: italic; margin-bottom: 0.5rem; }
+    .meet-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+
+    /* Mentee cards */
+    .mentee-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem; }
+    .mentee-avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; flex-shrink: 0; }
+    .mentee-info { flex: 1; }
+    .mentee-name { font-weight: 600; font-size: 0.95rem; }
+    .mentee-meta { color: rgba(255,255,255,0.5); font-size: 0.82rem; margin-top: 0.15rem; }
+    .trained-badge { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); border-radius: 99px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600; }
+    .pending-badge { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); border-radius: 99px; padding: 0.2rem 0.65rem; font-size: 0.75rem; font-weight: 600; }
+
+    /* Progress bar */
+    .progress { background: rgba(255,255,255,0.08); border-radius: 99px; height: 6px; overflow: hidden; margin-top: 0.4rem; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #2d8cff, #7c3aed); border-radius: 99px; transition: width 0.6s; }
+
+    /* Status badges */
+    .badge { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 600; }
+    .badge-requested  { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .badge-scheduled  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .badge-completed  { background: rgba(16,185,129,0.15); color: #34d399; }
+    .badge-cancelled  { background: rgba(239,68,68,0.15);  color: #f87171; }
+
+    /* Buttons */
+    .btn { padding: 0.45rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.82rem; font-weight: 500; transition: all 0.2s; }
+    .btn-accept   { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+    .btn-accept:hover { background: rgba(16,185,129,0.35); }
+    .btn-decline  { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .btn-decline:hover { background: rgba(239,68,68,0.3); }
+    .btn-complete { background: rgba(45,140,255,0.2); color: #60a5fa; border: 1px solid rgba(45,140,255,0.3); }
+    .btn-complete:hover { background: rgba(45,140,255,0.35); }
+    .btn-primary  { background: #2d8cff; color: white; }
+    .btn-primary:hover { background: #1a7ae8; }
+
+    /* Form inputs */
+    .form-field { margin-bottom: 1rem; }
+    .form-field label { display: block; margin-bottom: 0.4rem; font-size: 0.875rem; color: rgba(255,255,255,0.8); }
+    .form-field input, .form-field textarea, .form-field select {
+      width: 100%; padding: 0.75rem 1rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 10px; color: white; font-size: 0.9rem; font-family: inherit;
+    }
+    .form-field input::placeholder, .form-field textarea::placeholder { color: rgba(255,255,255,0.35); }
+    .form-field input:focus, .form-field textarea:focus, .form-field select:focus { outline: none; border-color: #2d8cff; }
+    .form-field select option { background: #1e293b; color: white; }
+
+    /* Empty state */
+    .empty { text-align: center; padding: 2.5rem 1rem; color: rgba(255,255,255,0.4); }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* Section divider */
+    .divider-label { font-size: 0.78rem; font-weight: 600; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin: 1.25rem 0 0.75rem; }
+
+    /* Toast */
+    #mentor-toast { position: fixed; bottom: 2rem; right: 2rem; background: #1e293b; color: white; padding: 0.9rem 1.25rem; border-radius: 12px; font-size: 0.9rem; z-index: 9999; box-shadow: 0 8px 30px rgba(0,0,0,0.3); display: none; border-left: 4px solid #2d8cff; max-width: 320px; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .mobile-tabs { display: flex; overflow-x: auto; gap: 0.4rem; padding: 0.75rem 1rem; background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .mobile-tabs .nav-btn { flex-shrink: 0; white-space: nowrap; }
+    }
+    .mobile-tabs { display: none; }
+  </style>
 </head>
 <body>
-  <!-- Header same as dashboard -->
-  <header class="site-header" role="banner">
-    <div class="container header-inner">
-      <a class="brand" href="../index.html">
-        <span class="brand__logo" aria-hidden="true">🌟</span>
-        <span class="brand__name">ISOP+</span>
-      </a>
-      <div id="header-actions" class="header-actions">
-        <a class="btn btn--secondary" href="dashboard.html">Dashboard</a>
-        <button class="btn btn--outline" onclick="logout()">Logout</button>
-      </div>
+
+  <header class="dash-header">
+    <a class="dash-brand" href="../index.html">🌟 ISOP+</a>
+    <div class="header-right">
+      <span class="mentor-name" id="mentorGreeting"></span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
     </div>
   </header>
 
-  <main id="main" class="site-main" style="padding: 2rem 0;">
-    <div class="container">
-      <div class="topbar" style="margin-bottom: 2rem;">
-        <h1 style="margin: 0;">Mentor Tools</h1>
-        <p style="color: #94a3b8; margin: 0.25rem 0 0;">Schedule meetings, review feedback, manage resources</p>
-      </div>
+  <!-- Mobile tab bar -->
+  <div class="mobile-tabs">
+    <button class="nav-btn active" onclick="switchTab('overview', this)">📊 Overview</button>
+    <button class="nav-btn" onclick="switchTab('meetings', this)">📅 Meetings</button>
+    <button class="nav-btn" onclick="switchTab('mentees', this)">👥 Mentees</button>
+    <button class="nav-btn" onclick="switchTab('schedule', this)">➕ Schedule</button>
+    <button class="nav-btn" onclick="switchTab('reviews', this)">💬 Reviews</button>
+    <button class="nav-btn" onclick="switchTab('resources', this)">📚 Resources</button>
+  </div>
 
-      <!-- Tabs -->
-      <div style="background: rgba(255,255,255,0.05); border-radius: 16px; padding: 1rem; margin-bottom: 2rem; border: 1px solid rgba(255,255,255,0.1);">
-        <div style="display: flex; gap: 0.5rem; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1rem;">
-          <button class="tab-btn active" data-tab="schedule">📅 Schedule</button>
-          <button class="tab-btn" data-tab="reviews">💬 Reviews</button>
-          <button class="tab-btn" data-tab="mentees">👥 Mentees</button>
-          <button class="tab-btn" data-tab="resources">📚 Resources</button>
-        </div>
+  <div class="page-wrap">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <button class="nav-btn active" onclick="switchTab('overview', this)">📊 Overview</button>
+      <button class="nav-btn" onclick="switchTab('meetings', this)" id="nav-meetings">
+        📅 Meetings
+        <span class="nav-badge" id="pendingBadge" style="display:none;"></span>
+      </button>
+      <button class="nav-btn" onclick="switchTab('mentees', this)">👥 Mentees</button>
+      <button class="nav-btn" onclick="switchTab('schedule', this)">➕ Schedule</button>
+      <button class="nav-btn" onclick="switchTab('reviews', this)">💬 Reviews</button>
+      <button class="nav-btn" onclick="switchTab('resources', this)">📚 Resources</button>
+    </nav>
 
-        <!-- Schedule Tab -->
-        <div id="schedule-tab" class="tab-content active">
-          <h2>Schedule Meeting</h2>
-          <div style="display: grid; gap: 1rem; max-width: 500px;">
-            <input id="tool-mentee-id" placeholder="Mentee email/ID" style="padding: 0.75rem; border-radius: 8px; border: 1px solid #475569;">
-            <input id="tool-meeting-date" type="datetime-local" style="padding: 0.75rem; border-radius: 8px; border: 1px solid #475569;">
-            <textarea id="tool-meeting-notes" placeholder="Notes (optional)" rows="3" style="padding: 0.75rem; border-radius: 8px; border: 1px solid #475569; resize: vertical;"></textarea>
-            <button id="tool-schedule-btn" class="btn btn--primary" style="width: 100%; padding: 0.75rem;">Schedule Meeting</button>
+    <!-- Main content -->
+    <main class="main-content">
+
+      <!-- ── OVERVIEW ── -->
+      <section id="tab-overview" class="tab-section active">
+        <div class="section-title">Welcome back 👋</div>
+        <div class="section-sub" id="overviewSub">Loading your stats…</div>
+
+        <div class="stats-row">
+          <div class="stat-box blue">
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-lbl">Total Meetings</div>
+          </div>
+          <div class="stat-box amber">
+            <div class="stat-num" id="stat-pending">0</div>
+            <div class="stat-lbl">Pending Requests</div>
+          </div>
+          <div class="stat-box green">
+            <div class="stat-num" id="stat-trained">0</div>
+            <div class="stat-lbl">Trained Mentees</div>
+          </div>
+          <div class="stat-box purple">
+            <div class="stat-num" id="stat-resources">0</div>
+            <div class="stat-lbl">Resources Shared</div>
           </div>
         </div>
 
-        <!-- Reviews Tab -->
-        <div id="reviews-tab" class="tab-content">
-          <h2>Your Reviews & Feedback</h2>
-          <div id="reviews-list" style="display: grid; gap: 1rem; max-height: 400px; overflow-y: auto;"></div>
+        <!-- Pending requests preview -->
+        <div class="card">
+          <div class="card-title">🔔 Pending Meeting Requests</div>
+          <div id="overview-pending"></div>
         </div>
 
-        <!-- Mentees Tab -->
-        <div id="mentees-tab" class="tab-content">
-          <h2>Assigned Mentees</h2>
-          <div id="mentees-list" style="display: grid; gap: 1rem;"></div>
+        <!-- Upcoming scheduled -->
+        <div class="card">
+          <div class="card-title">📅 Upcoming Scheduled Meetings</div>
+          <div id="overview-upcoming"></div>
         </div>
 
-        <!-- Resources Tab -->
-        <div id="resources-tab" class="tab-content">
-          <h2>Upload Resource</h2>
-          <div style="display: grid; gap: 1rem; max-width: 500px;">
-            <input id="tool-res-title" placeholder="Title" style="padding: 0.75rem; border-radius: 8px; border: 1px solid #475569;">
-            <textarea id="tool-res-desc" placeholder="Description" rows="2" style="padding: 0.75rem; border-radius: 8px; border: 1px solid #475569;"></textarea>
-            <input type="file" id="tool-res-file" accept=".pdf,.docx,.pptx,image/*">
-            <button id="tool-upload-res" class="btn btn--primary" style="width: 100%; padding: 0.75rem;">Upload</button>
+        <!-- Trained mentees preview -->
+        <div class="card">
+          <div class="card-title">🎓 Trained Mentees</div>
+          <div id="overview-trained"></div>
+        </div>
+      </section>
+
+      <!-- ── MEETINGS ── -->
+      <section id="tab-meetings" class="tab-section">
+        <div class="section-title">Meetings</div>
+        <div class="section-sub">Accept requests, track sessions, mark completions</div>
+
+        <div class="divider-label">🔔 Pending Requests</div>
+        <div id="meetings-requested"></div>
+
+        <div class="divider-label">📅 Upcoming Scheduled</div>
+        <div id="meetings-scheduled"></div>
+
+        <div class="divider-label">✅ Completed Sessions</div>
+        <div id="meetings-completed"></div>
+      </section>
+
+      <!-- ── MENTEES ── -->
+      <section id="tab-mentees" class="tab-section">
+        <div class="section-title">My Mentees</div>
+        <div class="section-sub">All unique mentees you've worked with</div>
+
+        <!-- Trained vs In-progress summary -->
+        <div class="stats-row" style="grid-template-columns: 1fr 1fr; max-width: 360px; margin-bottom: 1.5rem;">
+          <div class="stat-box green">
+            <div class="stat-num" id="mt-trained-count">0</div>
+            <div class="stat-lbl">Trained</div>
           </div>
-          <h3 style="margin-top: 2rem;">Your Resources</h3>
-          <div id="resources-list" style="display: grid; gap: 1rem;"></div>
+          <div class="stat-box amber">
+            <div class="stat-num" id="mt-inprogress-count">0</div>
+            <div class="stat-lbl">In Progress</div>
+          </div>
         </div>
-      </div>
-    </div>
-  </main>
 
+        <div class="divider-label">🎓 Trained Mentees (completed ≥ 1 session)</div>
+        <div id="mentees-trained-list"></div>
+
+        <div class="divider-label">🔄 In Progress</div>
+        <div id="mentees-inprogress-list"></div>
+      </section>
+
+      <!-- ── SCHEDULE ── -->
+      <section id="tab-schedule" class="tab-section">
+        <div class="section-title">Schedule a Meeting</div>
+        <div class="section-sub">Send a meeting invite to a mentee</div>
+
+        <div class="card" style="max-width: 520px;">
+          <div class="form-field">
+            <label>Mentee email or ID</label>
+            <input id="tool-mentee-id" placeholder="mentee@example.com" />
+          </div>
+          <div class="form-field">
+            <label>Date &amp; time</label>
+            <input id="tool-meeting-date" type="text" placeholder="Pick date and time" />
+          </div>
+          <div class="form-field">
+            <label>Meeting type</label>
+            <select id="tool-meeting-type">
+              <option value="one-on-one">One-on-one session</option>
+              <option value="group">Group session</option>
+              <option value="review">Progress review</option>
+              <option value="workshop">Workshop</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Notes / agenda (optional)</label>
+            <textarea id="tool-meeting-notes" rows="3" placeholder="What will you cover?"></textarea>
+          </div>
+          <button id="tool-schedule-btn" class="btn btn-primary" style="width:100%; padding:0.8rem;">Schedule Meeting</button>
+        </div>
+      </section>
+
+      <!-- ── REVIEWS ── -->
+      <section id="tab-reviews" class="tab-section">
+        <div class="section-title">Reviews &amp; Feedback</div>
+        <div class="section-sub">What your mentees say about your sessions</div>
+        <div id="reviews-list"></div>
+      </section>
+
+      <!-- ── RESOURCES ── -->
+      <section id="tab-resources" class="tab-section">
+        <div class="section-title">Resources</div>
+        <div class="section-sub">Upload study materials and guides for your mentees</div>
+
+        <div class="card" style="max-width: 520px; margin-bottom: 1.75rem;">
+          <div class="card-title">Upload New Resource</div>
+          <div class="form-field">
+            <label>Title</label>
+            <input id="tool-res-title" placeholder="e.g. Career Readiness Guide" />
+          </div>
+          <div class="form-field">
+            <label>Description (optional)</label>
+            <textarea id="tool-res-desc" rows="2" placeholder="Brief description…"></textarea>
+          </div>
+          <div class="form-field">
+            <label>File (PDF, DOCX, PPTX, image)</label>
+            <input type="file" id="tool-res-file" accept=".pdf,.doc,.docx,.pptx,image/*" style="padding:0.5rem;" />
+          </div>
+          <button id="tool-upload-res" class="btn btn-primary" style="width:100%; padding:0.8rem;">Upload Resource</button>
+        </div>
+
+        <div class="card-title" style="margin-bottom:0.75rem;">Your Resources</div>
+        <div id="resources-list"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <div id="mentor-toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/localdb.js"></script>
   <script src="../assets/js/supabase.js"></script>
-  <script src="../assets/js/backend.js"></script>
   <script src="../assets/js/main.js"></script>
   <script>
-    // Mentor tools script
     const auth = JSON.parse(localStorage.getItem('isop_auth'));
-    if (!auth || auth.role !== 'mentor') {
-      window.location.href = 'dashboard.html';
+    if (!auth || auth.role !== 'mentor') window.location.href = 'login.html';
+
+    document.getElementById('mentorGreeting').textContent = 'Hi, ' + (auth.name || auth.email);
+
+    // ── Helpers ───────────────────────────────────────────────────
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function showToast(msg, type) {
+      const t = document.getElementById('mentor-toast');
+      t.textContent = msg;
+      t.style.borderLeftColor = type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#2d8cff';
+      t.style.display = 'block';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.style.display = 'none'; }, 3500);
     }
 
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab + '-tab').classList.add('active');
-        loadTabData(btn.dataset.tab);
+    // ── Local storage helpers ─────────────────────────────────────
+    function getMeetings() {
+      try { return JSON.parse(localStorage.getItem('isop_col_meetings') || '[]'); } catch(e) { return []; }
+    }
+    function saveMeetings(list) {
+      localStorage.setItem('isop_col_meetings', JSON.stringify(list));
+    }
+    function getResources() {
+      try { return JSON.parse(localStorage.getItem('isop_mentor_resources') || '[]'); } catch(e) { return []; }
+    }
+    function saveResources(list) {
+      localStorage.setItem('isop_mentor_resources', JSON.stringify(list));
+    }
+
+    // Meetings for THIS mentor (by id or email)
+    function myMeetings() {
+      return getMeetings().filter(m =>
+        m.mentorId === auth.id || m.mentorId === auth.email ||
+        m.mentorEmail === auth.email
+      );
+    }
+
+    // All unique mentees this mentor has worked with
+    function uniqueMentees() {
+      const seen = new Map();
+      myMeetings().forEach(m => {
+        const key = m.menteeId || m.mentee_id || '';
+        if (key && !seen.has(key)) seen.set(key, { id: key, meetings: [] });
+        if (key) seen.get(key).meetings.push(m);
       });
-    });
-
-    async function loadTabData(tab) {
-      const mockId = auth.email.replace(/[@.]/g, '_');
-      try {
-        if (tab === 'reviews') {
-          const reviews = await getMyReviews(mockId);
-          document.getElementById('reviews-list').innerHTML = reviews.map(r => `
-            <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px; border-left: 4px solid ${r.rating > 3 ? '#4ade80' : '#ff6b6b'};">
-              <strong>${r.from_id}</strong> (${r.rating}/5)
-              <p>${r.comment}</p>
-              <small>${new Date(r.created_at).toLocaleDateString()}</small>
-            </div>
-          `).join('') || '<p>No reviews yet. Great work!</p>';
-        } else if (tab === 'mentees') {
-          const mentees = await getMyMentees(mockId);
-          document.getElementById('mentees-list').innerHTML = mentees.map(m => `
-            <div style="padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 12px;">
-              <h4>${m.mentee?.name || m.mentee}</h4>
-              <p>${new Date(m.datetime).toLocaleString()}</p>
-              <p>Status: ${m.status}</p>
-            </div>
-          `).join('') || '<p>No mentees scheduled.</p>';
-        } else if (tab === 'resources') {
-          // Load resources list here if query added
-        }
-      } catch (e) {
-        console.warn('Data load failed:', e);
-      }
+      return Array.from(seen.values());
     }
 
-    // Event listeners
+    // ── Tab switching ─────────────────────────────────────────────
+    function switchTab(name, btn) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      if (btn) btn.classList.add('active');
+      renderTab(name);
+    }
+
+    // ── Badge helpers ─────────────────────────────────────────────
+    function statusBadge(status) {
+      const map = { requested: 'badge-requested', scheduled: 'badge-scheduled', completed: 'badge-completed', cancelled: 'badge-cancelled' };
+      const labels = { requested: '⏳ Requested', scheduled: '📅 Scheduled', completed: '✅ Completed', cancelled: '❌ Cancelled' };
+      return `<span class="badge ${map[status] || 'badge-scheduled'}">${labels[status] || status}</span>`;
+    }
+
+    function fmtDate(dt) {
+      if (!dt) return 'TBD';
+      try { return new Date(dt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }); } catch(e) { return dt; }
+    }
+
+    // ── Meeting card renderer ─────────────────────────────────────
+    function meetingCard(m, actions) {
+      const icon = { requested: '🔔', scheduled: '📅', completed: '✅', cancelled: '❌' }[m.status] || '📅';
+      return `
+        <div class="meeting-card" data-id="${esc(m.id)}">
+          <div class="meet-icon">${icon}</div>
+          <div class="meet-body">
+            <div class="meet-mentee">${esc(m.menteeId || m.mentee_id || 'Mentee')}</div>
+            <div class="meet-time">${fmtDate(m.datetime || m.time)} ${m.type ? '• ' + esc(m.type) : ''}</div>
+            ${m.notes ? `<div class="meet-notes">"${esc(m.notes)}"</div>` : ''}
+            ${statusBadge(m.status || 'scheduled')}
+            ${actions ? `<div class="meet-actions">${actions(m)}</div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    function emptyState(icon, msg) {
+      return `<div class="empty"><div class="empty-icon">${icon}</div><p>${msg}</p></div>`;
+    }
+
+    // ── Update pending badge ──────────────────────────────────────
+    function updateBadge() {
+      const pending = myMeetings().filter(m => m.status === 'requested').length;
+      const badge = document.getElementById('pendingBadge');
+      badge.textContent = pending;
+      badge.style.display = pending ? 'flex' : 'none';
+    }
+
+    // ── Meeting actions ───────────────────────────────────────────
+    function acceptMeeting(id) {
+      const list = getMeetings();
+      const m = list.find(x => x.id === id);
+      if (m) { m.status = 'scheduled'; saveMeetings(list); }
+      showToast('Meeting accepted and scheduled!', 'success');
+      renderAll();
+    }
+    function declineMeeting(id) {
+      const list = getMeetings();
+      const m = list.find(x => x.id === id);
+      if (m) { m.status = 'cancelled'; saveMeetings(list); }
+      showToast('Meeting declined.', '');
+      renderAll();
+    }
+    function completeMeeting(id) {
+      const list = getMeetings();
+      const m = list.find(x => x.id === id);
+      if (m) { m.status = 'completed'; m.completedAt = new Date().toISOString(); saveMeetings(list); }
+      showToast('Session marked as completed! 🎓', 'success');
+      renderAll();
+    }
+
+    // Expose for onclick attributes
+    window.acceptMeeting  = acceptMeeting;
+    window.declineMeeting = declineMeeting;
+    window.completeMeeting = completeMeeting;
+
+    // ── Render functions ──────────────────────────────────────────
+    function renderOverview() {
+      const all       = myMeetings();
+      const pending   = all.filter(m => m.status === 'requested');
+      const upcoming  = all.filter(m => m.status === 'scheduled' && new Date(m.datetime || m.time) >= new Date()).sort((a,b) => new Date(a.datetime||a.time) - new Date(b.datetime||b.time));
+      const mentees   = uniqueMentees();
+      const trained   = mentees.filter(mt => mt.meetings.some(m => m.status === 'completed'));
+      const resources = getResources();
+
+      document.getElementById('stat-total').textContent     = all.length;
+      document.getElementById('stat-pending').textContent   = pending.length;
+      document.getElementById('stat-trained').textContent   = trained.length;
+      document.getElementById('stat-resources').textContent = resources.length;
+      document.getElementById('overviewSub').textContent    = `${auth.name || auth.email} • ${new Date().toLocaleDateString([], { weekday:'long', month:'long', day:'numeric' })}`;
+
+      // Pending
+      const pendEl = document.getElementById('overview-pending');
+      pendEl.innerHTML = pending.length
+        ? pending.slice(0,3).map(m => meetingCard(m, m => `
+            <button class="btn btn-accept"  onclick="acceptMeeting('${esc(m.id)}')">Accept</button>
+            <button class="btn btn-decline" onclick="declineMeeting('${esc(m.id)}')">Decline</button>`)).join('')
+          + (pending.length > 3 ? `<p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-top:0.5rem;">+${pending.length-3} more — see Meetings tab</p>` : '')
+        : emptyState('🎉', 'No pending requests right now.');
+
+      // Upcoming
+      const upEl = document.getElementById('overview-upcoming');
+      upEl.innerHTML = upcoming.length
+        ? upcoming.slice(0,3).map(m => meetingCard(m, m => `
+            <button class="btn btn-complete" onclick="completeMeeting('${esc(m.id)}')">Mark Complete</button>
+            <button class="btn btn-decline"  onclick="declineMeeting('${esc(m.id)}')">Cancel</button>`)).join('')
+        : emptyState('📭', 'No upcoming meetings scheduled.');
+
+      // Trained mentees preview
+      const trEl = document.getElementById('overview-trained');
+      trEl.innerHTML = trained.length
+        ? trained.slice(0,4).map(mt => `
+            <div class="mentee-card">
+              <div class="mentee-avatar">${esc(mt.id[0].toUpperCase())}</div>
+              <div class="mentee-info">
+                <div class="mentee-name">${esc(mt.id)}</div>
+                <div class="mentee-meta">${mt.meetings.filter(m=>m.status==='completed').length} session(s) completed</div>
+              </div>
+              <span class="trained-badge">Trained ✓</span>
+            </div>`).join('')
+        : emptyState('🎓', 'No mentees have completed a session yet.');
+    }
+
+    function renderMeetings() {
+      const all       = myMeetings();
+      const requested = all.filter(m => m.status === 'requested').sort((a,b) => new Date(a.datetime||a.time) - new Date(b.datetime||b.time));
+      const scheduled = all.filter(m => m.status === 'scheduled').sort((a,b) => new Date(a.datetime||a.time) - new Date(b.datetime||b.time));
+      const completed = all.filter(m => m.status === 'completed').sort((a,b) => new Date(b.completedAt||b.datetime||b.time) - new Date(a.completedAt||a.datetime||a.time));
+
+      document.getElementById('meetings-requested').innerHTML = requested.length
+        ? requested.map(m => meetingCard(m, m => `
+            <button class="btn btn-accept"  onclick="acceptMeeting('${esc(m.id)}')">✓ Accept</button>
+            <button class="btn btn-decline" onclick="declineMeeting('${esc(m.id)}')">✗ Decline</button>`)).join('')
+        : emptyState('🎉', 'No pending requests.');
+
+      document.getElementById('meetings-scheduled').innerHTML = scheduled.length
+        ? scheduled.map(m => meetingCard(m, m => `
+            <button class="btn btn-complete" onclick="completeMeeting('${esc(m.id)}')">✓ Mark Complete</button>
+            <button class="btn btn-decline"  onclick="declineMeeting('${esc(m.id)}')">Cancel</button>`)).join('')
+        : emptyState('📭', 'No upcoming meetings. Schedule one below.');
+
+      document.getElementById('meetings-completed').innerHTML = completed.length
+        ? completed.map(m => meetingCard(m, null)).join('')
+        : emptyState('📋', 'No completed sessions yet.');
+    }
+
+    function renderMentees() {
+      const all     = uniqueMentees();
+      const trained = all.filter(mt => mt.meetings.some(m => m.status === 'completed'));
+      const inprog  = all.filter(mt => !mt.meetings.some(m => m.status === 'completed'));
+
+      document.getElementById('mt-trained-count').textContent   = trained.length;
+      document.getElementById('mt-inprogress-count').textContent = inprog.length;
+
+      const renderList = (items, isTrained) => items.length
+        ? items.map(mt => {
+            const totalSessions   = mt.meetings.length;
+            const doneSessions    = mt.meetings.filter(m => m.status === 'completed').length;
+            const pct             = totalSessions ? Math.round((doneSessions / totalSessions) * 100) : 0;
+            const lastMeeting     = [...mt.meetings].sort((a,b) => new Date(b.datetime||b.time||0) - new Date(a.datetime||a.time||0))[0];
+            return `
+              <div class="mentee-card">
+                <div class="mentee-avatar">${esc(mt.id[0].toUpperCase())}</div>
+                <div class="mentee-info" style="flex:1;">
+                  <div class="mentee-name">${esc(mt.id)}</div>
+                  <div class="mentee-meta">${doneSessions} of ${totalSessions} session(s) completed${lastMeeting ? ' • Last: ' + fmtDate(lastMeeting.datetime||lastMeeting.time) : ''}</div>
+                  <div class="progress" style="max-width:200px;"><div class="progress-fill" style="width:${pct}%"></div></div>
+                </div>
+                ${isTrained ? '<span class="trained-badge">Trained ✓</span>' : '<span class="pending-badge">In Progress</span>'}
+              </div>`;
+          }).join('')
+        : emptyState(isTrained ? '🎓' : '🔄', isTrained ? 'No trained mentees yet.' : 'No mentees in progress.');
+
+      document.getElementById('mentees-trained-list').innerHTML   = renderList(trained, true);
+      document.getElementById('mentees-inprogress-list').innerHTML = renderList(inprog, false);
+    }
+
+    async function renderReviews() {
+      let reviews = [];
+      try {
+        if (window.getMyReviews) reviews = await window.getMyReviews(auth.id || auth.email);
+      } catch(e) {}
+      document.getElementById('reviews-list').innerHTML = reviews.length
+        ? reviews.map(r => `
+            <div class="card">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.5rem;">
+                <strong>${esc(r.from_id || 'Anonymous')}</strong>
+                <span style="color:${r.rating>=4?'#fbbf24':'#94a3b8'};font-size:0.9rem;">${'★'.repeat(r.rating||0)}${'☆'.repeat(5-(r.rating||0))}</span>
+              </div>
+              <p style="color:rgba(255,255,255,0.75);font-size:0.9rem;margin-bottom:0.4rem;">${esc(r.comment||'')}</p>
+              <small style="color:#64748b;">${r.created_at ? new Date(r.created_at).toLocaleDateString() : ''}</small>
+            </div>`).join('')
+        : emptyState('💬', 'No reviews yet. Keep mentoring — feedback will appear here!');
+    }
+
+    function renderResources() {
+      const list = getResources();
+      document.getElementById('resources-list').innerHTML = list.length
+        ? list.map(r => `
+            <div class="card" style="display:flex;align-items:center;gap:1rem;">
+              <div style="font-size:2rem;">📄</div>
+              <div style="flex:1;">
+                <div style="font-weight:600;margin-bottom:0.2rem;">${esc(r.title)}</div>
+                <div style="color:rgba(255,255,255,0.55);font-size:0.83rem;">${esc(r.description||'')} ${r.fileName ? '• ' + esc(r.fileName) : ''}</div>
+                <div style="color:#64748b;font-size:0.78rem;margin-top:0.15rem;">${r.uploadedAt ? new Date(r.uploadedAt).toLocaleDateString() : ''}</div>
+              </div>
+            </div>`).join('')
+        : emptyState('📚', 'No resources uploaded yet.');
+    }
+
+    function renderTab(name) {
+      if      (name === 'overview')   renderOverview();
+      else if (name === 'meetings')   renderMeetings();
+      else if (name === 'mentees')    renderMentees();
+      else if (name === 'reviews')    renderReviews();
+      else if (name === 'resources')  renderResources();
+    }
+
+    function renderAll() {
+      updateBadge();
+      const active = document.querySelector('.tab-section.active');
+      if (active) renderTab(active.id.replace('tab-', ''));
+    }
+
+    // ── Schedule meeting ──────────────────────────────────────────
     document.getElementById('tool-schedule-btn').addEventListener('click', async () => {
-      const menteeId = document.getElementById('tool-mentee-id').value;
+      const menteeId = document.getElementById('tool-mentee-id').value.trim();
       const datetime = document.getElementById('tool-meeting-date').value;
-      const notes = document.getElementById('tool-meeting-notes').value;
-      if (!menteeId || !datetime) return alert('Mentee and date required');
+      const type     = document.getElementById('tool-meeting-type').value;
+      const notes    = document.getElementById('tool-meeting-notes').value.trim();
+
+      if (!menteeId) { showToast('Mentee email/ID is required.', 'error'); return; }
+      if (!datetime) { showToast('Please pick a date and time.', 'error'); return; }
+
+      const btn = document.getElementById('tool-schedule-btn');
+      btn.disabled = true; btn.textContent = 'Scheduling…';
+
       try {
-        const mockId = auth.email.replace(/[@.]/g, '_');
-        await scheduleMeeting(mockId, menteeId, new Date(datetime), notes);
-        alert('Meeting scheduled!');
-        loadTabData('mentees');
-      } catch (e) {
-        alert('Error: ' + e.message);
+        const meeting = {
+          id: 'meet_' + Date.now(),
+          mentorId: auth.id,
+          mentorEmail: auth.email,
+          menteeId,
+          datetime: new Date(datetime).toISOString(),
+          type,
+          notes,
+          status: 'scheduled',
+          createdAt: new Date().toISOString()
+        };
+
+        // Try Supabase first
+        if (window.supabaseClient) {
+          try {
+            await window.supabaseClient.from('meetings').insert([{
+              mentor_id: auth.id, mentee_id: menteeId,
+              datetime: meeting.datetime, notes, status: 'scheduled'
+            }]);
+          } catch(e) { console.warn('Supabase meeting save failed, using local:', e); }
+        }
+
+        // Always save locally
+        const list = getMeetings();
+        list.unshift(meeting);
+        saveMeetings(list);
+
+        showToast('Meeting scheduled successfully!', 'success');
+        document.getElementById('tool-mentee-id').value = '';
+        document.getElementById('tool-meeting-date').value = '';
+        document.getElementById('tool-meeting-notes').value = '';
+        renderAll();
+
+        // Switch to meetings tab to show the new entry
+        setTimeout(() => switchTab('meetings', document.querySelector('[onclick="switchTab(\'meetings\', this)"]')), 600);
+      } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Schedule Meeting';
       }
     });
 
+    // ── Upload resource ───────────────────────────────────────────
     document.getElementById('tool-upload-res').addEventListener('click', async () => {
-      const title = document.getElementById('tool-res-title').value;
-      const desc = document.getElementById('tool-res-desc').value;
-      const file = document.getElementById('tool-res-file').files[0];
-      if (!title || !file) return alert('Title and file required');
+      const title = document.getElementById('tool-res-title').value.trim();
+      const desc  = document.getElementById('tool-res-desc').value.trim();
+      const file  = document.getElementById('tool-res-file').files[0];
+
+      if (!title) { showToast('Title is required.', 'error'); return; }
+      if (!file)  { showToast('Please select a file.', 'error'); return; }
+
+      const btn = document.getElementById('tool-upload-res');
+      btn.disabled = true; btn.textContent = 'Uploading…';
+
       try {
-        const mockId = auth.email.replace(/[@.]/g, '_');
-        await uploadResource(mockId, title, desc, file);
-        alert('Resource uploaded!');
+        if (window.uploadResource && window.supabaseClient) {
+          try { await window.uploadResource(auth.id || auth.email, title, desc, file); } catch(e) {}
+        }
+        const list = getResources();
+        list.unshift({ id: 'res_' + Date.now(), mentorId: auth.id, title, description: desc, fileName: file.name, uploadedAt: new Date().toISOString() });
+        saveResources(list);
+
+        showToast('Resource uploaded!', 'success');
         document.getElementById('tool-res-title').value = '';
-        document.getElementById('tool-res-file').value = '';
-      } catch (e) {
-        alert('Upload failed: ' + e.message);
+        document.getElementById('tool-res-desc').value  = '';
+        document.getElementById('tool-res-file').value  = '';
+        renderResources();
+      } catch(e) {
+        showToast('Upload failed: ' + e.message, 'error');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Upload Resource';
       }
     });
 
-    // Flatpickr for better date picker
-    flatpickr("#tool-meeting-date", { enableTime: true });
+    // ── Flatpickr date picker ─────────────────────────────────────
+    flatpickr('#tool-meeting-date', { enableTime: true, dateFormat: 'Y-m-d H:i', minDate: 'today' });
 
-    // Load initial tab
-    loadTabData('schedule');
+    // ── Init ─────────────────────────────────────────────────────
+    renderAll();
 
     function logout() {
       localStorage.removeItem('isop_auth');
       window.location.href = '../index.html';
     }
   </script>
-
-  <style>
-    .tab-btn { padding: 0.75rem 1.25rem; border: none; background: transparent; color: #94a3b8; border-radius: 8px; cursor: pointer; font-weight: 500; white-space: nowrap; }
-    .tab-btn.active { background: rgba(45,140,255,0.2); color: #2d8cff; }
-    .tab-btn:hover { background: rgba(255,255,255,0.1); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    .loading { color: #94a3b8; font-style: italic; }
-  </style>
 </body>
 </html>
-

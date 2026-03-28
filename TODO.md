@@ -1,39 +1,40 @@
-# ISOP+ Mentor Features Implementation TODO
+# ISOP+ Bug Fix Implementation TODO
 
-Status: [0/14] Completed
+Status: [0/12] Completed
 
-## Approved Plan Breakdown
+## Approved Bug Fix Plan Breakdown
 
-### 1. Setup & DB Schema [ ]
-- [x] Guide/setup Supabase tables: meetings, reviews, resources (w/RLS) → SQL provided above
-- [ ] Update Supabase keys in supabase.js/backend.js if needed
+### 1. Core Fixes [ ]
+- [x] 1.1 Fix supabase.js: Define missing mentor functions (getMyReviews, getMyMentees, scheduleMeeting, uploadResource) with proper Supabase queries
+- [x] 1.2 Fix backend.js: Remove circular calls, proxy to supabase.js exports
 
-### 2. Backend Enhancements [ ]
-- [x] Add mentor funcs to supabase.js: getMyReviews(), getMyMentees(), scheduleMeeting(), uploadResource()
-- [x] Integrate in backend.js
+Status: [5/12] Completed
+- [ ] 1.3 Fix main.js: Add bindOpportunityActionButtons utility + event delegation to de-dupe listeners
 
-### 3. Frontend Core [ ]
-- [x] Enhance main.js renderMentorDashboard(): functional lists/tables/buttons with async data/UI controls
-- [x] Add scheduling, review list, upload handler (w/ fallbacks)
+### 2. LocalDB Implementation [ ]
+- [ ] 2.1 Implement assets/js/localdb.js: IndexedDB wrapper for window.localDB (get/setCollection, getCurrentUser, clearCurrentUser)
+- [ ] 2.2 Seed initial data: users, opportunities, mentors, notifications
 
-### 4. New/Extend UI Pages [ ]
-- [x] Create pages/mentor-tools.html (tabs: Schedule, Reviews, Resources, Mentees w/ Flatpickr)
-- [ ] Update pages/mentorship.html (mentor entry point)
-- [x] Update pages/dashboard.html (scripts + mentor link)
+### 3. main.js Robustness [ ]
+- [ ] 3.1 Add null checks & window.localDB fallbacks throughout render funcs
+- [ ] 3.2 Extract small render utilities from massive renderStudentDashboard
+- [ ] 3.3 Add try/catch error handling in dashboard renders
+- [ ] 3.4 Replace alert() with renderAlert() for better UX
 
-### 5. CSS & Polish [ ]
-- [ ] assets/css/style.css: calendar/upload styles
+### 4. Security/Polish [ ]
+- [ ] 4.1 Mask/hide Supabase keys (use env or comment out)
+- [ ] 4.2 Update original TODO.md progress markers
 
-### 6. Testing & Integration [ ]
-- [ ] Real auth role sync (localStorage -> Supabase profile.role)
-- [ ] Test: Login mentor → schedule/view/upload
-- [ ] Error handling, loading states
+### 5. Testing [ ]
+- [ ] 5.1 Test student login → dashboard → apply/save opp
+- [ ] 5.2 Test mentor login → schedule meeting, upload resource (no crashes)
+- [ ] 5.3 Verify localDB persistence across refreshes
+- [ ] 5.4 Check console: no ReferenceErrors/undefined calls
 
-### 7. Admin/Student Ties [ ]
-- [ ] Admin: manage meetings/reviews
-- [ ] Student: request/book meetings
+### 6. Completion [ ]
+- [ ] 6.1 Update this TODO.md with ✓ marks
+- [ ] 6.2 Run attempt_completion
 
-Next: DB schema → backend → frontend.
+Next step: Fix supabase.js missing functions → backend.js → main.js → localdb.js → test.
 
-Updated after each step.
-
+Updated after each step completed.
