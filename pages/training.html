@@ -5,7 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Training • ISOP+</title>
   <meta name="description" content="Explore training programs designed to help you develop new skills and build your confidence." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+      margin: 1.75rem 0;
+    }
+    .course-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .course-card:hover { transform: translateY(-3px); border-color: rgba(45,140,255,0.3); }
+    .course-icon { font-size: 2rem; }
+    .course-level {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 99px;
+    }
+    .level-beginner { background: rgba(74,222,128,0.12); color: #4ade80; border: 1px solid rgba(74,222,128,0.25); }
+    .level-intermediate { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+    .level-advanced { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .course-title { font-size: 1.05rem; font-weight: 700; margin: 0; }
+    .course-desc { font-size: 0.875rem; color: rgba(255,255,255,0.65); line-height: 1.55; flex: 1; margin: 0; }
+    .course-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: rgba(255,255,255,0.45); }
+    .course-topics { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .course-topic {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .course-progress-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .course-progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, #2d8cff, #0bb5ff);
+    }
+    .explore-btn {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: 1px solid rgba(45,140,255,0.35);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: rgba(45,140,255,0.1);
+      color: #60a5fa;
+      transition: all 0.2s;
+    }
+    .explore-btn:hover { background: rgba(45,140,255,0.2); border-color: rgba(45,140,255,0.6); color: white; }
+
+    .stats-banner {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .stat-item { display: flex; flex-direction: column; gap: 0.2rem; }
+    .stat-item .num { font-size: 1.8rem; font-weight: 800; color: #60a5fa; }
+    .stat-item .lbl { font-size: 0.8rem; color: rgba(255,255,255,0.5); font-weight: 500; }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -16,13 +102,11 @@
         <span class="brand__logo" aria-hidden="true">🌟</span>
         <span class="brand__name">ISOP+</span>
       </a>
-
       <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
       </button>
-
       <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
         <ul class="nav-list">
           <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
@@ -33,7 +117,6 @@
           <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
-
       <div id="header-actions" class="header-actions">
         <a class="btn btn--secondary" href="login.html">Login</a>
         <a class="btn btn--primary" href="register.html">Register</a>
@@ -44,40 +127,24 @@
   <main id="main" class="site-main">
     <section class="features" aria-label="Training programs">
       <div class="container">
-        <h1 class="section-title">Training & learning paths</h1>
+        <h1 class="section-title">Training &amp; learning paths</h1>
         <p class="section-lead">
-          Select a program to build new skills — from digital literacy to inclusive design, we serve learners at every level.
+          Flexible, self-paced courses designed for learners at every level — from total beginners to those ready to advance their careers.
         </p>
 
-        <div class="feature-grid">
-          <article class="feature-card" aria-labelledby="course-1-title">
-            <div class="feature-icon" aria-hidden="true">🧠</div>
-            <h2 id="course-1-title" class="feature-title">Digital Skills Bootcamp</h2>
-            <p class="feature-desc">A beginner-friendly course that introduces web design, accessibility, and online collaboration tools.</p>
-            <a class="btn btn--secondary" href="#">Explore</a>
-          </article>
-
-          <article class="feature-card" aria-labelledby="course-2-title">
-            <div class="feature-icon" aria-hidden="true">🔧</div>
-            <h2 id="course-2-title" class="feature-title">Career Growth Paths</h2>
-            <p class="feature-desc">Learn how to build a portfolio, network with mentors, and interview with confidence.</p>
-            <a class="btn btn--secondary" href="#">Explore</a>
-          </article>
-
-          <article class="feature-card" aria-labelledby="course-3-title">
-            <div class="feature-icon" aria-hidden="true">🌐</div>
-            <h2 id="course-3-title" class="feature-title">Accessibility & Inclusive Design</h2>
-            <p class="feature-desc">Understand how to create experiences that work for everyone, including people with disabilities.</p>
-            <a class="btn btn--secondary" href="#">Explore</a>
-          </article>
+        <div class="stats-banner">
+          <div class="stat-item"><span class="num">3</span><span class="lbl">Learning Paths</span></div>
+          <div class="stat-item"><span class="num">12+</span><span class="lbl">Modules</span></div>
+          <div class="stat-item"><span class="num">100%</span><span class="lbl">Free Access</span></div>
+          <div class="stat-item"><span class="num">✓</span><span class="lbl">Certificates Included</span></div>
         </div>
+
+        <div class="course-grid" id="courseGrid"></div>
 
         <div class="cta" aria-label="Join a training program">
           <div class="container cta__inner">
-            <p class="cta__text">
-              Ready to learn? Log in to save progress and access certificates.
-            </p>
-            <a class="btn btn--primary" href="login.html">Sign in to get started</a>
+            <p class="cta__text">Log in to save your progress and earn certificates.</p>
+            <a class="btn btn--primary" href="login.html" id="trainingCta">Sign in to get started</a>
           </div>
         </div>
       </div>
@@ -91,7 +158,6 @@
         <span class="brand__name">ISOP+</span>
         <p class="footer__text">Building a more inclusive future through skills, access, and support.</p>
       </div>
-
       <div class="footer-links">
         <div class="footer-column">
           <h3 class="footer-heading">Platform</h3>
@@ -99,19 +165,16 @@
             <li><a href="opportunities.html">Opportunities</a></li>
             <li><a href="training.html">Training</a></li>
             <li><a href="mentorship.html">Mentorship</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="student-dashboard.html">Dashboard</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Company</h3>
           <ul class="footer-list">
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Get Help</h3>
           <ul class="footer-list">
@@ -119,31 +182,102 @@
             <li><a href="register.html">Register</a></li>
           </ul>
         </div>
-
         <div class="footer-column footer-contact">
           <h3 class="footer-heading">Contact</h3>
           <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
           <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
-          <div class="footer-social" aria-label="Social media links">
-            <a class="footer-social__link" href="#" aria-label="Twitter">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="LinkedIn">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2h0a4 4 0 0 1 4-2z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="Facebook">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11 9.95V14.2h-2.3v-2.1H11V9.7c0-2.3 1.4-3.6 3.5-3.6 1 0 2 .1 2 .1v2.2h-1.1c-1.1 0-1.4.7-1.4 1.3v1.6h2.8l-.4 2.1h-2.4v7.8A10 10 0 0 0 22 12z"/></svg>
-            </a>
-          </div>
         </div>
       </div>
-
-      <div class="footer-legal">
-        <p>&copy; 2026 ISOP+. All rights reserved.</p>
-      </div>
+      <div class="footer-legal"><p>&copy; 2026 ISOP+. All rights reserved.</p></div>
     </div>
   </footer>
 
+  <script src="../assets/js/localdb.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script>
+    const courses = [
+      {
+        id: 'trn-1', icon: '🧠', level: 'beginner', title: 'Digital Skills Bootcamp',
+        desc: 'A beginner-friendly introduction to web design, accessibility, online collaboration tools, and digital literacy for the modern workplace.',
+        duration: '4 weeks', modules: 8,
+        topics: ['HTML & CSS basics', 'Online tools', 'Email & communication', 'Digital safety'],
+        progress: 70
+      },
+      {
+        id: 'trn-2', icon: '🔧', level: 'intermediate', title: 'Career Growth Paths',
+        desc: 'Build a portfolio, network with mentors, and interview with confidence. This course is designed for learners ready to take the next step.',
+        duration: '6 weeks', modules: 10,
+        topics: ['Resume writing', 'Interview skills', 'LinkedIn profile', 'Networking'],
+        progress: 40
+      },
+      {
+        id: 'trn-3', icon: '🌐', level: 'intermediate', title: 'Accessibility & Inclusive Design',
+        desc: 'Understand how to create digital experiences that work for everyone, including people with visual, motor, and cognitive disabilities.',
+        duration: '5 weeks', modules: 9,
+        topics: ['WCAG standards', 'Screen readers', 'Color contrast', 'Inclusive UX'],
+        progress: 90
+      },
+      {
+        id: 'trn-4', icon: '📊', level: 'beginner', title: 'Data Literacy for Beginners',
+        desc: 'Learn to read, interpret, and communicate data using Excel, Google Sheets, and basic data visualization principles.',
+        duration: '3 weeks', modules: 6,
+        topics: ['Spreadsheets', 'Charts & graphs', 'Data interpretation', 'Reporting'],
+        progress: 0
+      },
+      {
+        id: 'trn-5', icon: '💼', level: 'advanced', title: 'Entrepreneurship & Self-Employment',
+        desc: 'For learners who want to create their own path. Covers business basics, pitching, financial planning, and finding clients.',
+        duration: '8 weeks', modules: 12,
+        topics: ['Business model', 'Client acquisition', 'Financial planning', 'Pitching'],
+        progress: 0
+      },
+      {
+        id: 'trn-6', icon: '🤝', level: 'beginner', title: 'Self-Advocacy & Workplace Rights',
+        desc: 'Know your rights in the workplace as a person with a disability or as a woman in tech. Practical tools for real situations.',
+        duration: '2 weeks', modules: 4,
+        topics: ['Disability rights', 'Reasonable accommodations', 'Speaking up', 'Legal basics'],
+        progress: 0
+      },
+    ];
+
+    const auth = JSON.parse(localStorage.getItem('isop_auth') || 'null');
+    const trainingProgress = JSON.parse(localStorage.getItem('isop_col_trainingModules') || '[]');
+
+    if (auth) {
+      const cta = document.getElementById('trainingCta');
+      cta.textContent = 'Go to My Dashboard';
+      cta.href = 'student-dashboard.html';
+    }
+
+    document.getElementById('courseGrid').innerHTML = courses.map(c => {
+      const saved = trainingProgress.find(t => t.id === c.id);
+      const pct = saved ? (saved.progressByEmail?.[auth?.email] || saved.completed || 0) : (auth ? c.progress : 0);
+      const levelClass = 'level-' + c.level;
+      const topics = c.topics.map(t => '<span class="course-topic">' + t + '</span>').join('');
+      const btnLabel = auth ? (pct > 0 ? 'Continue (' + pct + '% done)' : 'Start Course') : 'Sign In to Enroll';
+
+      return '<div class="course-card">' +
+        '<span class="course-icon">' + c.icon + '</span>' +
+        '<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">' +
+          '<span class="course-level ' + levelClass + '">' + c.level + '</span>' +
+        '</div>' +
+        '<h2 class="course-title">' + c.title + '</h2>' +
+        '<p class="course-desc">' + c.desc + '</p>' +
+        '<div class="course-meta"><span>⏱ ' + c.duration + '</span><span>📖 ' + c.modules + ' modules</span></div>' +
+        '<div class="course-topics">' + topics + '</div>' +
+        (auth && pct > 0 ? '<div class="course-progress-bar"><div class="course-progress-fill" style="width:' + pct + '%"></div></div>' : '') +
+        '<button class="explore-btn" onclick="handleEnroll(\'' + c.id + '\')">' + btnLabel + '</button>' +
+      '</div>';
+    }).join('');
+
+    function handleEnroll(courseId) {
+      if (!auth) {
+        sessionStorage.setItem('isop_after_login_redirect', 'student-dashboard.html');
+        window.location.href = 'login.html';
+      } else {
+        window.location.href = 'student-dashboard.html';
+      }
+    }
+  </script>
 </body>
 </html>

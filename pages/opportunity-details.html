@@ -5,7 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Opportunity Details • ISOP+</title>
   <meta name="description" content="Review details about an opportunity and take the next step to apply." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .details-hero {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .details-type-pill {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 99px;
+      border: 1px solid rgba(45,140,255,0.4);
+      background: rgba(45,140,255,0.12);
+      color: #60a5fa;
+      margin-bottom: 0.9rem;
+    }
+    .details-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 0 0.6rem;
+      line-height: 1.2;
+    }
+    .details-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+    .details-meta span { display: flex; align-items: center; gap: 0.35rem; }
+    .details-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .details-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.6rem;
+      border-radius: 7px;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.65);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 768px) { .details-grid { grid-template-columns: 1fr; } }
+    .details-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .details-card h2 { font-size: 1.05rem; font-weight: 700; margin: 0 0 0.75rem; color: rgba(255,255,255,0.9); }
+    .details-card p, .details-card li { color: rgba(255,255,255,0.7); font-size: 0.92rem; line-height: 1.65; }
+    .details-card ul { padding-left: 1.2rem; margin: 0; }
+    .details-card li { margin-bottom: 0.4rem; }
+    .apply-card {
+      background: linear-gradient(135deg, rgba(45,140,255,0.12), rgba(100,60,220,0.1));
+      border: 1px solid rgba(45,140,255,0.25);
+      border-radius: 18px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 80px;
+    }
+    .apply-card h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 1rem; }
+    .apply-info { display: grid; gap: 0.6rem; margin-bottom: 1.25rem; }
+    .apply-info-row { display: flex; justify-content: space-between; font-size: 0.85rem; }
+    .apply-info-row .label { color: rgba(255,255,255,0.5); }
+    .apply-info-row .value { font-weight: 600; color: white; }
+    .apply-btn {
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: 14px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2d8cff, #0bb5ff);
+      color: white;
+      box-shadow: 0 6px 20px rgba(45,140,255,0.35);
+      transition: all 0.2s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .apply-btn:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(45,140,255,0.45); }
+    .deadline-warn {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.45);
+      text-align: center;
+      margin-top: 0.75rem;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.88rem;
+      margin-bottom: 1.25rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: white; }
+    #not-found { text-align: center; padding: 3rem 1rem; }
+    #not-found h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    #not-found p { color: rgba(255,255,255,0.6); }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -16,13 +134,11 @@
         <span class="brand__logo" aria-hidden="true">🌟</span>
         <span class="brand__name">ISOP+</span>
       </a>
-
       <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
       </button>
-
       <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
         <ul class="nav-list">
           <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
@@ -33,7 +149,6 @@
           <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
-
       <div id="header-actions" class="header-actions">
         <a class="btn btn--secondary" href="login.html">Login</a>
         <a class="btn btn--primary" href="register.html">Register</a>
@@ -44,34 +159,12 @@
   <main id="main" class="site-main">
     <section class="features" aria-label="Opportunity details">
       <div class="container">
-        <h1 class="section-title">Opportunity title goes here</h1>
-        <p class="section-lead">
-          A short summary of the opportunity, eligibility requirements, and how it aligns with ISOP+ values.
-        </p>
-
-        <div class="feature-grid">
-          <article class="feature-card" aria-labelledby="details-title">
-            <h2 id="details-title" class="feature-title">What you’ll do</h2>
-            <p class="feature-desc">
-              Describe the role, the responsibilities, and how your participation will be supported.
-            </p>
-          </article>
-
-          <article class="feature-card" aria-labelledby="benefits-title">
-            <h2 id="benefits-title" class="feature-title">What you’ll get</h2>
-            <p class="feature-desc">
-              Mention benefits — stipends, mentorship, accessible tools, or certification opportunities.
-            </p>
-          </article>
-
-          <article class="feature-card" aria-labelledby="apply-title">
-            <h2 id="apply-title" class="feature-title">Ready to apply?</h2>
-            <p class="feature-desc">
-              If you’re ready, you can submit an application and track its status in your dashboard.
-            </p>
-<a class="btn btn--primary" href="apply.html?oppId=opp-001">Apply Now</a>
-<p class="section-lead small">Deadline: 2026-04-15 • 12 slots left</p>
-          </article>
+        <a class="back-link" href="opportunities.html">← Back to Opportunities</a>
+        <div id="details-content"></div>
+        <div id="not-found" style="display:none;">
+          <h2>Opportunity not found</h2>
+          <p>This opportunity may have expired or the link is invalid.</p>
+          <a class="btn btn--primary" href="opportunities.html" style="display:inline-block;margin-top:1rem;">Browse Opportunities</a>
         </div>
       </div>
     </section>
@@ -84,7 +177,6 @@
         <span class="brand__name">ISOP+</span>
         <p class="footer__text">Building a more inclusive future through skills, access, and support.</p>
       </div>
-
       <div class="footer-links">
         <div class="footer-column">
           <h3 class="footer-heading">Platform</h3>
@@ -92,19 +184,16 @@
             <li><a href="opportunities.html">Opportunities</a></li>
             <li><a href="training.html">Training</a></li>
             <li><a href="mentorship.html">Mentorship</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="student-dashboard.html">Dashboard</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Company</h3>
           <ul class="footer-list">
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Get Help</h3>
           <ul class="footer-list">
@@ -112,31 +201,105 @@
             <li><a href="register.html">Register</a></li>
           </ul>
         </div>
-
         <div class="footer-column footer-contact">
           <h3 class="footer-heading">Contact</h3>
           <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
           <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
-          <div class="footer-social" aria-label="Social media links">
-            <a class="footer-social__link" href="#" aria-label="Twitter">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="LinkedIn">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2h0a4 4 0 0 1 4-2z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="Facebook">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11 9.95V14.2h-2.3v-2.1H11V9.7c0-2.3 1.4-3.6 3.5-3.6 1 0 2 .1 2 .1v2.2h-1.1c-1.1 0-1.4.7-1.4 1.3v1.6h2.8l-.4 2.1h-2.4v7.8A10 10 0 0 0 22 12z"/></svg>
-            </a>
-          </div>
         </div>
       </div>
-
-      <div class="footer-legal">
-        <p>&copy; 2026 ISOP+. All rights reserved.</p>
-      </div>
+      <div class="footer-legal"><p>&copy; 2026 ISOP+. All rights reserved.</p></div>
     </div>
   </footer>
 
+  <script src="../assets/js/localdb.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script>
+    const typeColors = { internship:'#3b82f6', job:'#10b981', grant:'#f59e0b', scholarship:'#a78bfa', fellowship:'#ec4899', contract:'#14b8a6' };
+    const typeDetails = {
+      internship: { doing: ['Work alongside experienced professionals', 'Contribute to real projects in an inclusive environment', 'Receive structured guidance and feedback throughout'], getting: ['Hands-on professional experience', 'Mentorship from industry experts', 'Certificate of completion', 'Accessible tools and accommodations provided'] },
+      job:        { doing: ['Join a team committed to inclusive practices', 'Deliver meaningful work with flexible support', 'Grow your skills in a professional setting'], getting: ['Competitive compensation', 'Career development support', 'Inclusive workplace with accessibility accommodations', 'Health and wellness benefits'] },
+      grant:      { doing: ['Submit a project proposal aligned with ISOP+ values', 'Complete milestones and submit progress reports', 'Present your outcomes to the ISOP+ community'], getting: ['Financial grant to fund your goals', 'Mentorship throughout the grant period', 'Visibility within the ISOP+ network', 'Certificate of achievement'] },
+      scholarship:{ doing: ['Apply with academic records and a personal statement', 'Maintain progress benchmarks during the award period', 'Engage with fellow scholars in the cohort'], getting: ['Full or partial tuition coverage', 'Academic mentorship and career guidance', 'Access to ISOP+ training resources', 'Community network of scholars'] },
+      fellowship: { doing: ['Lead an inclusive community or research project', 'Collaborate with fellow fellows across disciplines', 'Share learnings through workshops or reports'], getting: ['Stipend and project funding', 'Leadership coaching and mentorship', 'Platform to present your work', 'Lifelong ISOP+ alumni network'] },
+      contract:   { doing: ['Deliver a defined scope of work over a set period', 'Collaborate with ISOP+ team and partners', 'Provide accessible deliverables and documentation'], getting: ['Competitive contract rate', 'Flexible working arrangement', 'Accessible infrastructure and tooling', 'Professional reference on completion'] },
+    };
+
+    const oppId = new URLSearchParams(window.location.search).get('oppId') || 'opp-001';
+    const stored = JSON.parse(localStorage.getItem('isop_col_opportunities') || 'null');
+    const allOpps = (stored && stored.length) ? stored : (typeof opportunitiesData !== 'undefined' ? opportunitiesData : []);
+    const opp = allOpps.find(o => o.id === oppId);
+    const auth = JSON.parse(localStorage.getItem('isop_auth') || 'null');
+
+    if (!opp) {
+      document.getElementById('not-found').style.display = 'block';
+    } else {
+      const color = typeColors[opp.type] || '#2d8cff';
+      const info  = typeDetails[opp.type] || typeDetails.internship;
+      document.title = opp.title + ' • ISOP+';
+
+      const applyHref = auth ? `apply.html?oppId=${opp.id}` : `login.html`;
+      const applyLabel = auth ? 'Apply Now →' : '🔒 Sign In to Apply';
+
+      const doingItems  = info.doing.map(t  => `<li>${t}</li>`).join('');
+      const gettingItems= info.getting.map(t => `<li>${t}</li>`).join('');
+      const tags = (opp.tags||[]).map(t => `<span class="details-tag">${t}</span>`).join('');
+
+      document.getElementById('details-content').innerHTML = `
+        <div class="details-hero">
+          <div class="details-type-pill" style="border-color:${color}44;background:${color}18;color:${color}">${opp.type}</div>
+          <h1 class="details-title">${opp.title}</h1>
+          <div class="details-meta">
+            <span>📍 ${opp.location}</span>
+            <span>🪑 ${opp.slots} slots available</span>
+            ${opp.deadline ? `<span>📅 Deadline: ${opp.deadline}</span>` : ''}
+          </div>
+          <div class="details-tags">${tags}</div>
+        </div>
+
+        <div class="details-grid">
+          <div>
+            <div class="details-card">
+              <h2>About this opportunity</h2>
+              <p>${opp.description || 'An inclusive opportunity designed to support your growth and connect you with the right people.'}</p>
+            </div>
+            <div class="details-card">
+              <h2>What you'll do</h2>
+              <ul>${doingItems}</ul>
+            </div>
+            <div class="details-card">
+              <h2>What you'll get</h2>
+              <ul>${gettingItems}</ul>
+            </div>
+            <div class="details-card">
+              <h2>Who should apply</h2>
+              <p>This opportunity is open to disabled youth and women who are motivated to grow their skills and contribute meaningfully. No prior experience is required unless stated — we value potential and passion above all.</p>
+            </div>
+          </div>
+
+          <div>
+            <div class="apply-card">
+              <h2>Ready to apply?</h2>
+              <div class="apply-info">
+                <div class="apply-info-row"><span class="label">Type</span><span class="value" style="text-transform:capitalize">${opp.type}</span></div>
+                <div class="apply-info-row"><span class="label">Location</span><span class="value">${opp.location}</span></div>
+                <div class="apply-info-row"><span class="label">Slots</span><span class="value">${opp.slots} remaining</span></div>
+                ${opp.deadline ? `<div class="apply-info-row"><span class="label">Deadline</span><span class="value">${opp.deadline}</span></div>` : ''}
+              </div>
+              <a class="apply-btn" href="${applyHref}" id="applyBtn">${applyLabel}</a>
+              ${!auth ? `<p class="deadline-warn">You'll be redirected to sign in first</p>` : `<p class="deadline-warn">Application takes about 3 minutes</p>`}
+            </div>
+          </div>
+        </div>`;
+
+      // Store redirect if not logged in
+      document.getElementById('applyBtn')?.addEventListener('click', (e) => {
+        if (!auth) {
+          e.preventDefault();
+          sessionStorage.setItem('isop_after_login_redirect', `apply.html?oppId=${opp.id}`);
+          window.location.href = 'login.html';
+        }
+      });
+    }
+  </script>
 </body>
 </html>

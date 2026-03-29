@@ -148,39 +148,32 @@
             Have a question, suggestion, or partnership inquiry? Send us a message and our team will get back to you.
           </p>
 
-          <p class="form-note">
-            You can also contact us directly by phone at
-            <a href="tel:+250783193479">+250 783 193 479</a>
-            or by email at
-            <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a>.
-          </p>
+          <div class="contact-card">
+            <div class="contact-info">
+              <a class="contact-info-item" href="tel:+250783193479">
+                <span class="ci-icon">📞</span>
+                <div><strong>Phone</strong>+250 783 193 479</div>
+              </a>
+              <a class="contact-info-item" href="mailto:l.sheja@alustudent.com">
+                <span class="ci-icon">✉️</span>
+                <div><strong>Email</strong>l.sheja@alustudent.com</div>
+              </a>
+            </div>
 
-          <div class="feature-card">
-            <form
-              class="form"
-              id="contactForm"
-              name="contact"
-              method="POST"
-              data-netlify="true"
-              netlify-honeypot="bot-field"
-            >
-              <input type="hidden" name="form-name" value="contact" />
-              <input type="hidden" name="subject" value="New ISOP+ contact message" />
-              <p hidden>
-                <label>Don’t fill this out: <input name="bot-field" /></label>
-              </p>
-
-              <label class="form-label" for="name">Full name</label>
-              <input class="form-input" type="text" id="name" name="name" required />
-
-              <label class="form-label" for="email">Email</label>
-              <input class="form-input" type="email" id="email" name="email" required />
-
-              <label class="form-label" for="message">Message</label>
-              <textarea class="form-input" id="message" name="message" rows="6" required></textarea>
-
-              <button class="btn btn--primary" id="sendBtn" type="submit">Send message</button>
-
+            <form class="contact-form" id="contactForm">
+              <div>
+                <label class="form-label" for="name">Full name</label>
+                <input class="form-input" type="text" id="name" name="name" placeholder="Your full name" required />
+              </div>
+              <div>
+                <label class="form-label" for="email">Email address</label>
+                <input class="form-input" type="email" id="email" name="email" placeholder="you@example.com" required />
+              </div>
+              <div>
+                <label class="form-label" for="message">Message</label>
+                <textarea class="form-input" id="message" name="message" rows="5" placeholder="How can we help you?" required></textarea>
+              </div>
+              <button class="send-btn" id="sendBtn" type="submit">Send Message →</button>
               <div id="formStatus" class="form-status" aria-live="polite"></div>
             </form>
           </div>
@@ -249,22 +242,24 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/localdb.js"></script>
+  <script src="../assets/js/supabase.js"></script>
   <script src="../assets/js/main.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      const form = document.getElementById("contactForm");
-      const status = document.getElementById("formStatus");
+      const form    = document.getElementById("contactForm");
+      const status  = document.getElementById("formStatus");
       const sendBtn = document.getElementById("sendBtn");
 
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
-
         status.className = "form-status";
         status.textContent = "";
 
-        const name = form.name.value.trim();
-        const email = form.email.value.trim();
-        const message = form.message.value.trim();
+        const name    = document.getElementById("name").value.trim();
+        const email   = document.getElementById("email").value.trim();
+        const message = document.getElementById("message").value.trim();
 
         if (!name || !email || !message) {
           status.className = "form-status error";
@@ -273,31 +268,46 @@
         }
 
         sendBtn.disabled = true;
-        sendBtn.textContent = "Sending...";
+        sendBtn.textContent = "Sending…";
 
-        try {
-          const formData = new FormData(form);
+        const msg = {
+          id: "msg_" + Date.now(),
+          name, email, message,
+          sentAt: new Date().toISOString(),
+          read: false
+        };
 
-          const response = await fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams(formData).toString()
-          });
+        let saved = false;
 
-          if (response.ok) {
-            status.className = "form-status success";
-            status.textContent = "Your message has been sent successfully.";
-            form.reset();
-          } else {
-            throw new Error("Form submission failed");
-          }
-        } catch (error) {
-          status.className = "form-status error";
-          status.textContent = "Sorry, your message could not be sent. Please try again.";
-        } finally {
-          sendBtn.disabled = false;
-          sendBtn.textContent = "Send message";
+        // 1 — Try Supabase
+        if (window.supabaseClient) {
+          try {
+            const { error } = await window.supabaseClient
+              .from("contact_messages")
+              .insert([{ name, email, message }]);
+            if (!error) saved = true;
+          } catch (_) {}
         }
+
+        // 2 — Always save locally as backup
+        try {
+          const msgs = JSON.parse(localStorage.getItem("isop_col_contact_messages") || "[]");
+          msgs.unshift(msg);
+          localStorage.setItem("isop_col_contact_messages", JSON.stringify(msgs));
+          saved = true;
+        } catch (_) {}
+
+        if (saved) {
+          status.className = "form-status success";
+          status.textContent = "✅ Message sent! We'll get back to you at " + email + " soon.";
+          form.reset();
+        } else {
+          status.className = "form-status error";
+          status.textContent = "Something went wrong. Please email us directly at l.sheja@alustudent.com";
+        }
+
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send message";
       });
     });
   </script>

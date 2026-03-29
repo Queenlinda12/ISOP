@@ -5,7 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mentorship • ISOP+</title>
   <meta name="description" content="Connect with mentors who can support your goals, offer feedback, and help you take the next step." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="../assets/css/style.css" />
+  <style>
+    .mentor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin: 1.75rem 0;
+    }
+    .mentor-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 18px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .mentor-card:hover { transform: translateY(-3px); border-color: rgba(45,140,255,0.3); }
+    .mentor-avatar {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .mentor-header { display: flex; align-items: center; gap: 0.9rem; }
+    .mentor-name { font-weight: 700; font-size: 1rem; margin: 0; }
+    .mentor-role { font-size: 0.8rem; color: rgba(255,255,255,0.5); margin: 0; }
+    .mentor-expertise {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #60a5fa;
+      background: rgba(45,140,255,0.1);
+      border: 1px solid rgba(45,140,255,0.2);
+      border-radius: 99px;
+      padding: 0.2rem 0.65rem;
+      display: inline-block;
+    }
+    .mentor-bio { font-size: 0.875rem; color: rgba(255,255,255,0.65); line-height: 1.55; flex: 1; }
+    .mentor-stats { display: flex; gap: 1rem; }
+    .mentor-stat { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+    .mentor-stat strong { color: white; display: block; font-size: 1rem; }
+    .connect-btn {
+      width: 100%;
+      padding: 0.7rem;
+      border-radius: 12px;
+      border: none;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #2d8cff, #0bb5ff);
+      color: white;
+      transition: all 0.2s;
+    }
+    .connect-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(45,140,255,0.35); }
+
+    .how-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    .how-section h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 1.25rem; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 1rem; }
+    .step { display: flex; flex-direction: column; gap: 0.4rem; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg,#2d8cff,#0bb5ff); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; }
+    .step h3 { font-size: 0.92rem; font-weight: 700; margin: 0; }
+    .step p { font-size: 0.82rem; color: rgba(255,255,255,0.6); margin: 0; }
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -16,13 +89,11 @@
         <span class="brand__logo" aria-hidden="true">🌟</span>
         <span class="brand__name">ISOP+</span>
       </a>
-
       <button class="nav-toggle" aria-controls="primary-nav" aria-expanded="false" aria-label="Open menu">
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
         <span class="nav-toggle__bar"></span>
       </button>
-
       <nav id="primary-nav" class="primary-nav" role="navigation" aria-label="Primary">
         <ul class="nav-list">
           <li class="nav-item"><a href="../index.html" class="nav-link">Home</a></li>
@@ -33,7 +104,6 @@
           <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
-
       <div id="header-actions" class="header-actions">
         <a class="btn btn--secondary" href="login.html">Login</a>
         <a class="btn btn--primary" href="register.html">Register</a>
@@ -44,40 +114,65 @@
   <main id="main" class="site-main">
     <section class="features" aria-label="Mentor connections">
       <div class="container">
-        <h1 class="section-title">Mentorship & guidance</h1>
+        <h1 class="section-title">Mentorship &amp; guidance</h1>
         <p class="section-lead">
-          Match with mentors who understand your path, offer practical advice, and help you set realistic goals.
+          Match with mentors who understand your path, offer practical advice, and help you set realistic goals. Every session is flexible and accessible.
         </p>
 
-        <div class="feature-grid">
+        <!-- How it works -->
+        <div class="how-section">
+          <h2>How mentorship works</h2>
+          <div class="steps">
+            <div class="step">
+              <div class="step-num">1</div>
+              <h3>Create your account</h3>
+              <p>Sign up as a student and complete your brief profile with your goals and interests.</p>
+            </div>
+            <div class="step">
+              <div class="step-num">2</div>
+              <h3>Browse mentors</h3>
+              <p>Explore available mentors by expertise area, language, or availability.</p>
+            </div>
+            <div class="step">
+              <div class="step-num">3</div>
+              <h3>Request a session</h3>
+              <p>Send a meeting request with a preferred time. Your mentor confirms within 48 hours.</p>
+            </div>
+            <div class="step">
+              <div class="step-num">4</div>
+              <h3>Grow together</h3>
+              <p>Track your progress, leave reviews, and build a lasting professional relationship.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mentor categories -->
+        <div class="feature-grid" style="margin-bottom: 0.5rem;">
           <article class="feature-card" aria-labelledby="mentor-1-title">
             <div class="feature-icon" aria-hidden="true">🧑‍🏫</div>
             <h2 id="mentor-1-title" class="feature-title">Career coach</h2>
-            <p class="feature-desc">Get help setting career goals, building a resume, and preparing for interviews.</p>
-            <a class="btn btn--secondary" href="#">Connect</a>
+            <p class="feature-desc">Get help setting career goals, building a resume, and preparing for interviews with someone who's been there.</p>
           </article>
-
           <article class="feature-card" aria-labelledby="mentor-2-title">
             <div class="feature-icon" aria-hidden="true">💡</div>
             <h2 id="mentor-2-title" class="feature-title">Skills mentor</h2>
-            <p class="feature-desc">Find someone to review your portfolio, walk you through projects, and answer questions.</p>
-            <a class="btn btn--secondary" href="#">Connect</a>
+            <p class="feature-desc">Find someone to review your portfolio, walk you through projects, and answer your technical questions.</p>
           </article>
-
           <article class="feature-card" aria-labelledby="mentor-3-title">
             <div class="feature-icon" aria-hidden="true">🤝</div>
             <h2 id="mentor-3-title" class="feature-title">Peer support</h2>
-            <p class="feature-desc">Join a peer cohort where you can learn together and share feedback.</p>
-            <a class="btn btn--secondary" href="#">Connect</a>
+            <p class="feature-desc">Join a peer cohort where you learn together, share feedback, and hold each other accountable.</p>
           </article>
         </div>
 
+        <!-- Featured mentor profiles -->
+        <h2 class="section-title" style="font-size:1.3rem; margin-top:2.5rem;">Featured mentors</h2>
+        <div class="mentor-grid" id="mentorGrid"></div>
+
         <div class="cta" aria-label="Join mentorship">
           <div class="container cta__inner">
-            <p class="cta__text">
-              Sign in to access mentorship matching and schedule your first session.
-            </p>
-            <a class="btn btn--primary" href="login.html">Sign in to connect</a>
+            <p class="cta__text">Sign in to request a session and start your mentorship journey.</p>
+            <a class="btn btn--primary" href="login.html" id="mentorshipCta">Sign in to connect</a>
           </div>
         </div>
       </div>
@@ -91,7 +186,6 @@
         <span class="brand__name">ISOP+</span>
         <p class="footer__text">Building a more inclusive future through skills, access, and support.</p>
       </div>
-
       <div class="footer-links">
         <div class="footer-column">
           <h3 class="footer-heading">Platform</h3>
@@ -99,19 +193,16 @@
             <li><a href="opportunities.html">Opportunities</a></li>
             <li><a href="training.html">Training</a></li>
             <li><a href="mentorship.html">Mentorship</a></li>
-            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="student-dashboard.html">Dashboard</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Company</h3>
           <ul class="footer-list">
             <li><a href="about.html">About</a></li>
             <li><a href="contact.html">Contact</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
           </ul>
         </div>
-
         <div class="footer-column">
           <h3 class="footer-heading">Get Help</h3>
           <ul class="footer-list">
@@ -119,31 +210,60 @@
             <li><a href="register.html">Register</a></li>
           </ul>
         </div>
-
         <div class="footer-column footer-contact">
           <h3 class="footer-heading">Contact</h3>
           <p>Phone: <a href="tel:+250783193479">+250 783 193 479</a></p>
           <p>Email: <a href="mailto:l.sheja@alustudent.com">l.sheja@alustudent.com</a></p>
-          <div class="footer-social" aria-label="Social media links">
-            <a class="footer-social__link" href="#" aria-label="Twitter">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="LinkedIn">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-14h4v2h0a4 4 0 0 1 4-2z"/></svg>
-            </a>
-            <a class="footer-social__link" href="#" aria-label="Facebook">
-              <svg class="footer-social__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12a10 10 0 1 0-11 9.95V14.2h-2.3v-2.1H11V9.7c0-2.3 1.4-3.6 3.5-3.6 1 0 2 .1 2 .1v2.2h-1.1c-1.1 0-1.4.7-1.4 1.3v1.6h2.8l-.4 2.1h-2.4v7.8A10 10 0 0 0 22 12z"/></svg>
-            </a>
-          </div>
         </div>
       </div>
-
-      <div class="footer-legal">
-        <p>&copy; 2026 ISOP+. All rights reserved.</p>
-      </div>
+      <div class="footer-legal"><p>&copy; 2026 ISOP+. All rights reserved.</p></div>
     </div>
   </footer>
 
+  <script src="../assets/js/localdb.js"></script>
   <script src="../assets/js/main.js"></script>
+  <script>
+    const featuredMentors = [
+      { name: 'Sarah M.', role: 'UX Designer at TechCorp', expertise: 'UX & Accessibility', bio: 'Helping disabled youth break into tech design. 6 years of inclusive design experience across startups and NGOs.', mentees: 12, sessions: 47, color: '#3b82f6' },
+      { name: 'James O.', role: 'Senior Backend Engineer', expertise: 'Web Development', bio: 'Passionate about making coding accessible. I can help with Python, Node.js, APIs, and career transitions into tech.', mentees: 8, sessions: 31, color: '#10b981' },
+      { name: 'Amina K.', role: 'Career Coach & Trainer', expertise: 'Career Growth', bio: 'Former HR manager turned coach. I specialize in resume building, interview prep, and workplace accommodation strategies.', mentees: 19, sessions: 74, color: '#f59e0b' },
+      { name: 'Grace N.', role: 'Data Analyst', expertise: 'Data & Analytics', bio: 'I help learners understand data tools like Excel, Tableau, and Python. Representation in data matters — let us build it.', mentees: 6, sessions: 22, color: '#a78bfa' },
+      { name: 'David R.', role: 'Inclusive Education Specialist', expertise: 'Learning Support', bio: 'Focused on helping learners with disabilities identify their strengths, navigate academia, and access the right resources.', mentees: 14, sessions: 58, color: '#ec4899' },
+      { name: 'Claire T.', role: 'Product Manager', expertise: 'Product & Strategy', bio: 'I guide early-career professionals in building product thinking skills and navigating inclusive organizations effectively.', mentees: 9, sessions: 35, color: '#14b8a6' },
+    ];
+
+    const auth = JSON.parse(localStorage.getItem('isop_auth') || 'null');
+    if (auth) {
+      document.getElementById('mentorshipCta').textContent = 'Go to My Dashboard →';
+      document.getElementById('mentorshipCta').href = auth.role === 'mentor' ? 'mentor-tools.html' : 'student-dashboard.html';
+    }
+
+    document.getElementById('mentorGrid').innerHTML = featuredMentors.map(m => `
+      <div class="mentor-card">
+        <div class="mentor-header">
+          <div class="mentor-avatar" style="background:${m.color}22;color:${m.color}">${m.name.charAt(0)}</div>
+          <div>
+            <p class="mentor-name">${m.name}</p>
+            <p class="mentor-role">${m.role}</p>
+          </div>
+        </div>
+        <span class="mentor-expertise">${m.expertise}</span>
+        <p class="mentor-bio">${m.bio}</p>
+        <div class="mentor-stats">
+          <div class="mentor-stat"><strong>${m.mentees}</strong>Mentees</div>
+          <div class="mentor-stat"><strong>${m.sessions}</strong>Sessions</div>
+        </div>
+        <button class="connect-btn" onclick="handleConnect()">Connect with ${m.name.split(' ')[0]}</button>
+      </div>`).join('');
+
+    function handleConnect() {
+      if (!auth) {
+        sessionStorage.setItem('isop_after_login_redirect', 'student-dashboard.html');
+        window.location.href = 'login.html';
+      } else {
+        window.location.href = auth.role === 'student' ? 'student-dashboard.html' : 'mentor-tools.html';
+      }
+    }
+  </script>
 </body>
 </html>

@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard - ISOP+</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="../assets/css/style.css" />
   <style>
     :root {
@@ -32,7 +34,8 @@
       margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
     }
 
     .admin-layout {
@@ -395,6 +398,11 @@
           <span>Mentorship</span>
         </button>
 
+        <button class="nav-btn" data-section="messages">
+          <span class="nav-icon">✉️</span>
+          <span>Messages</span>
+        </button>
+
         <button class="nav-btn" data-section="reports">
           <span class="nav-icon">📈</span>
           <span>Reports</span>
@@ -422,49 +430,25 @@
         </div>
 
         <div class="stats-grid">
-          <div class="stat-card">
-            <h3>Total Users</h3>
-            <div class="stat-value">284</div>
-          </div>
-          <div class="stat-card">
-            <h3>Applications</h3>
-            <div class="stat-value">126</div>
-          </div>
-          <div class="stat-card">
-            <h3>Open Opportunities</h3>
-            <div class="stat-value">23</div>
-          </div>
-          <div class="stat-card">
-            <h3>Pending Reviews</h3>
-            <div class="stat-value">18</div>
-          </div>
+          <div class="stat-card"><h3>Registered Users</h3><div class="stat-value" id="stat-users">—</div></div>
+          <div class="stat-card"><h3>Applications</h3><div class="stat-value" id="stat-apps">—</div></div>
+          <div class="stat-card"><h3>Open Opportunities</h3><div class="stat-value" id="stat-opps">—</div></div>
+          <div class="stat-card"><h3>Pending Reviews</h3><div class="stat-value" id="stat-pending">—</div></div>
+          <div class="stat-card"><h3>Contact Messages</h3><div class="stat-value" id="stat-msgs">—</div></div>
         </div>
 
         <div class="content-grid">
           <div class="card">
-            <h2>Recent Activity</h2>
-            <div class="list">
-              <div class="list-item">
-                <strong>Amina applied for UX Internship</strong>
-                <span class="muted">2 hours ago</span>
-              </div>
-              <div class="list-item">
-                <strong>Diane requested mentor support</strong>
-                <span class="muted">Today</span>
-              </div>
-              <div class="list-item">
-                <strong>New training module published</strong>
-                <span class="muted">Yesterday</span>
-              </div>
-            </div>
+            <h2>Recent Applications</h2>
+            <div class="list" id="recent-apps-list"><p class="muted">No applications yet.</p></div>
           </div>
-
           <div class="card">
             <h2>Quick Actions</h2>
             <div class="btn-row">
               <button class="btn btn-primary" onclick="goToSection('opportunities')">Add Opportunity</button>
               <button class="btn btn-secondary" onclick="goToSection('applications')">Review Applications</button>
               <button class="btn btn-secondary" onclick="goToSection('users')">Manage Users</button>
+              <button class="btn btn-secondary" onclick="goToSection('messages')">View Messages</button>
             </div>
           </div>
         </div>
@@ -475,38 +459,13 @@
           <h1>Users Management</h1>
           <p>View and manage students, mentors, and administrators.</p>
         </div>
-
         <div class="card">
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Status</th>
-                </tr>
+                <tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>student@isop.com</td>
-                  <td>Student</td>
-                  <td><span class="badge active">Active</span></td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>mentor@isop.com</td>
-                  <td>Mentor</td>
-                  <td><span class="badge active">Active</span></td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>admin@isop.com</td>
-                  <td>Admin</td>
-                  <td><span class="badge active">Active</span></td>
-                </tr>
-              </tbody>
+              <tbody id="users-tbody"><tr><td colspan="5" class="muted">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -517,32 +476,13 @@
           <h1>Applications</h1>
           <p>Review submitted applications and their current status.</p>
         </div>
-
         <div class="card">
           <div class="table-wrap">
             <table>
               <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Opportunity</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>
+                <tr><th>Applicant</th><th>Opportunity</th><th>Date</th><th>Status</th><th>Action</th></tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>Amina</td>
-                  <td>UX Internship</td>
-                  <td>2026-01-15</td>
-                  <td><span class="badge pending">Pending</span></td>
-                </tr>
-                <tr>
-                  <td>John</td>
-                  <td>Frontend Dev</td>
-                  <td>2026-01-14</td>
-                  <td><span class="badge approved">Approved</span></td>
-                </tr>
-              </tbody>
+              <tbody id="apps-tbody"><tr><td colspan="5" class="muted">Loading…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -648,6 +588,16 @@
         </div>
       </section>
 
+      <section id="messages" class="section">
+        <div class="page-header">
+          <h1>Contact Messages</h1>
+          <p>Messages sent through the contact form.</p>
+        </div>
+        <div class="card">
+          <div class="list" id="messages-list"><p class="muted">No messages yet.</p></div>
+        </div>
+      </section>
+
       <section id="reports" class="section">
         <div class="page-header">
           <h1>Reports</h1>
@@ -700,46 +650,128 @@
   </div>
 
   <script>
-    function getAuthUser() {
-      const auth = localStorage.getItem('isop_auth');
-      const currentUser = localStorage.getItem('currentUser');
+    function ls(key) { try { return JSON.parse(localStorage.getItem(key) || '[]') } catch(e) { return [] } }
+    function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
-      if (auth) return JSON.parse(auth);
-      if (currentUser) return JSON.parse(currentUser);
-      return null;
+    function getAuthUser() {
+      try { return JSON.parse(localStorage.getItem('isop_auth')) } catch(e) { return null }
     }
 
     function goToSection(sectionId) {
       document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.section === sectionId);
       });
-
-      document.querySelectorAll('.section').forEach(section => {
-        section.classList.toggle('active', section.id === sectionId);
+      document.querySelectorAll('.section').forEach(s => {
+        s.classList.toggle('active', s.id === sectionId);
       });
     }
 
-    function logoutAdmin() {
-      localStorage.removeItem('isop_auth');
-      localStorage.removeItem('currentUser');
-      window.location.href = 'login.html';
+    function statusBadge(status) {
+      const s = (status||'pending').toLowerCase();
+      const cls = s === 'submitted' ? 'pending' : s === 'accepted' || s === 'approved' ? 'approved' : s === 'rejected' ? 'rejected' : 'pending';
+      return '<span class="badge ' + cls + '">' + esc(status||'Pending') + '</span>';
+    }
+
+    function updateAppStatus(appId, newStatus) {
+      const apps = ls('isop_col_applications');
+      const idx = apps.findIndex(a => a.id === appId);
+      if (idx !== -1) {
+        apps[idx].status = newStatus;
+        localStorage.setItem('isop_col_applications', JSON.stringify(apps));
+        loadData();
+      }
+    }
+
+    function loadData() {
+      const users = ls('isop_col_users');
+      const apps  = ls('isop_col_applications');
+      const opps  = ls('isop_col_opportunities');
+      const msgs  = ls('isop_col_contact_messages');
+      const pending = apps.filter(a => (a.status||'').toLowerCase() === 'submitted').length;
+
+      // Stats
+      document.getElementById('stat-users').textContent   = users.length || '—';
+      document.getElementById('stat-apps').textContent    = apps.length  || 0;
+      document.getElementById('stat-opps').textContent    = opps.length  || 8;
+      document.getElementById('stat-pending').textContent = pending;
+      document.getElementById('stat-msgs').textContent    = msgs.length  || 0;
+
+      // Recent apps list on overview
+      const recentList = document.getElementById('recent-apps-list');
+      if (apps.length) {
+        recentList.innerHTML = apps.slice(0,5).map(a => {
+          const date = a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '—';
+          return '<div class="list-item"><strong>' + esc(a.title||a.opportunityId||'—') + '</strong>' +
+            '<span class="muted">' + esc(a.email||a.userId||'') + ' &nbsp;·&nbsp; ' + date + ' &nbsp;·&nbsp; ' + (a.status||'Submitted') + '</span></div>';
+        }).join('');
+      } else {
+        recentList.innerHTML = '<p class="muted">No applications yet.</p>';
+      }
+
+      // Users table
+      const usersTbody = document.getElementById('users-tbody');
+      if (users.length) {
+        usersTbody.innerHTML = users.map((u, i) =>
+          '<tr><td>' + (i+1) + '</td><td>' + esc(u.name||'—') + '</td><td>' + esc(u.email) + '</td>' +
+          '<td style="text-transform:capitalize">' + esc(u.role||'student') + '</td>' +
+          '<td><span class="badge active">Active</span></td></tr>'
+        ).join('');
+      } else {
+        usersTbody.innerHTML = '<tr><td colspan="5" class="muted">No registered users yet. Users appear here after signing up.</td></tr>';
+      }
+
+      // Applications table
+      const appsTbody = document.getElementById('apps-tbody');
+      if (apps.length) {
+        appsTbody.innerHTML = apps.map(a => {
+          const date = a.submittedAt ? new Date(a.submittedAt).toLocaleDateString() : '—';
+          return '<tr><td>' + esc(a.email||a.userId||'—') + '</td>' +
+            '<td>' + esc(a.title||a.opportunityId||'—') + '</td>' +
+            '<td>' + date + '</td>' +
+            '<td>' + statusBadge(a.status) + '</td>' +
+            '<td><select onchange="updateAppStatus(\'' + a.id + '\', this.value)" style="padding:0.3rem 0.5rem;border-radius:8px;border:1px solid #e2e8f0;font-size:0.82rem;">' +
+              ['Submitted','Under Review','Accepted','Rejected'].map(s =>
+                '<option' + (a.status===s?' selected':'') + '>' + s + '</option>'
+              ).join('') +
+            '</select></td></tr>';
+        }).join('');
+      } else {
+        appsTbody.innerHTML = '<tr><td colspan="5" class="muted">No applications submitted yet.</td></tr>';
+      }
+
+      // Messages
+      const msgsList = document.getElementById('messages-list');
+      if (msgs.length) {
+        msgsList.innerHTML = msgs.map(m => {
+          const date = m.sentAt ? new Date(m.sentAt).toLocaleString() : '';
+          return '<div class="list-item">' +
+            '<strong>' + esc(m.name) + ' &lt;' + esc(m.email) + '&gt;</strong>' +
+            '<p style="margin:0.3rem 0 0.15rem;font-size:0.9rem;">' + esc(m.message) + '</p>' +
+            '<span class="muted" style="font-size:0.78rem;">' + date + '</span>' +
+          '</div>';
+        }).join('');
+      } else {
+        msgsList.innerHTML = '<p class="muted">No messages yet. They will appear here when users submit the contact form.</p>';
+      }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
       const user = getAuthUser();
-
       if (!user || user.role !== 'admin') {
         window.location.href = 'login.html';
         return;
       }
 
       document.querySelectorAll('.nav-btn[data-section]').forEach(btn => {
-        btn.addEventListener('click', () => {
-          goToSection(btn.dataset.section);
-        });
+        btn.addEventListener('click', () => goToSection(btn.dataset.section));
       });
 
-      document.getElementById('logoutBtn').addEventListener('click', logoutAdmin);
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('isop_auth');
+        window.location.href = 'login.html';
+      });
+
+      loadData();
     });
   </script>
 </body>
